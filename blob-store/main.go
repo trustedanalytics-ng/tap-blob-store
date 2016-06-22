@@ -18,27 +18,36 @@ package main
 
 import (
 	"net/http"
-
 	"github.com/gocraft/web"
-
 	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics/blob-store/minioClient"
 )
 
 type Context struct{}
 
 var (
 	logger = logger_wrapper.InitLogger("main")
+)
+
+const (
 	port = "8080"
+	bucketName = "blobstore"
 )
 
 func main() {
+	err := minioClient.CreateMinioClient(bucketName)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
 	r := web.New(Context{})
 	r.Post("/api/v1/blobs", (*Context).StoreBlob)
 	r.Get("/api/v1/blobs/:blob_id", (*Context).RetrieveBlob)
 	r.Delete("/api/v1/blobs/:blob_id", (*Context).RemoveBlob)
 
-	err := http.ListenAndServe("localhost:" + port, r)
+	err = http.ListenAndServe("localhost:" + port, r)
 	if err != nil {
 		logger.Critical("Couldn't serve blob store on port ", port, " Application will be closed now.")
+		logger.Fatal(err)
 	}
 }
