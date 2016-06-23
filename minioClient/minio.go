@@ -20,6 +20,7 @@ import (
 	"io"
 	"github.com/minio/minio-go"
 	"github.com/trustedanalytics/tap-go-common/logger"
+	"errors"
 )
 
 var (
@@ -40,6 +41,8 @@ const (
 
 const (
 	ErrBucketNotExist = "The specified bucket does not exist."
+	ErrKeyNotExist = "The specified key does not exist."
+	ErrKeyAlreadyInUse = "The specified key already exists."
 )
 
 func CreateMinioClient(_bucketName string) error {
@@ -76,7 +79,15 @@ func CreateMinioClient(_bucketName string) error {
 func StoreInMinio(objectName string, object io.Reader) error {
 	logger.Info("Trying to store object -", objectName, "- in bucket -", bucketName)
 
-        _, err := minioClient.PutObject(bucketName, objectName, object, "application/octet-stream")
+	_, err := minioClient.StatObject(bucketName, objectName)
+	if(err == nil) {
+		return errors.New(ErrKeyAlreadyInUse)
+	}
+	if err.Error() != ErrKeyNotExist {
+		return err
+	}
+
+        _, err = minioClient.PutObject(bucketName, objectName, object, "application/octet-stream")
 	if err != nil {
                 return err
         }
