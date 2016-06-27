@@ -25,12 +25,12 @@ import (
 	"mime/multipart"
 	"github.com/minio/minio-go"
 	"github.com/gocraft/web"
-	"github.com/trustedanalytics/blob-store/minioClient"
+	"github.com/trustedanalytics/blob-store/minioWrapper"
 )
 
 const (
-	ErrKeyNotExist = "The specified key does not exist."
-	ErrBlobNotSpecified = "http: no such file"
+	ErrMsgKeyNotExist = "The specified key does not exist."
+	ErrMsgBlobNotSpecified = "http: no such file"
 
 	defaultMaxMemory = 32 << 20 // 32 MB
 )
@@ -38,7 +38,7 @@ const (
 func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 	blob_id := req.FormValue("blob_id")
 	if(blob_id == "") {
-		logNoticedError(rw, "The specified Blob does not exist", nil, http.StatusNotFound)
+		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusNotFound)
 		return
 	}
 
@@ -46,19 +46,18 @@ func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 	blob,err := getBlobFromRequest(rw, req)
 	if err != nil {
 		switch err.Error() {
-		case ErrBlobNotSpecified:
+		case ErrMsgBlobNotSpecified:
 			logNoticedError(rw, "Blob not specified.", err, http.StatusBadRequest)
 		default:
 			logUnhandledError(rw, err)
 		}
 		return
-		logger.Error(err)
 	}
 
-	err = minioClient.StoreInMinio(blob_id, blob)
+	err = c.wrappedMinio.StoreInMinio(blob_id, blob)
 	if err != nil {
-		switch err.Error() {
-		case minioClient.ErrKeyAlreadyInUse:
+		switch err {
+		case minioWrapper.ErrKeyAlreadyInUse:
 			logNoticedError(rw, "The specified Blob ID is already in use", err, http.StatusConflict)
 		//case Err...:
 		//	logNoticedError(rw, "The space allocated for the Blob Store has been exhausted", err, 507)
@@ -87,17 +86,13 @@ func getBlobFromRequest(w web.ResponseWriter, r *web.Request) (multipart.File, e
 
 func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	blob_id := req.PathParams["blob_id"]
-	if(blob_id == "") {
-		logNoticedError(rw, "The blob_id is not specified", nil, http.StatusNotFound)
-		return
-	}
 	logger.Info("Retrieving blob -", blob_id)
 
-	blob, err := minioClient.RetrieveFromMinio(blob_id)
+	blob, err := c.wrappedMinio.RetrieveFromMinio(blob_id)
 	if err != nil {
 		switch err.Error() {
-		case ErrKeyNotExist:
-			logNoticedError(rw, "The specified blob does not exist", err, http.StatusNotFound)
+		case ErrMsgKeyNotExist:
+			logNoticedError(rw, "The specified blob does not exist.", err, http.StatusNotFound)
 		default:
 			logUnhandledError(rw, err)
 		}
@@ -131,17 +126,12 @@ func seekThroughFile(blob *minio.Object) error {
 
 func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 	blob_id := req.PathParams["blob_id"]
-	if(blob_id == "") {
-		logNoticedError(rw, "The blob_id is not specified", nil, http.StatusNotFound)
-		return
-	}
 	logger.Info("Removing blob -", blob_id)
 
-
-	err := minioClient.RemoveFromMinio(blob_id)
+	err := c.wrappedMinio.RemoveFromMinio(blob_id)
 	if err != nil {
 		switch err.Error() {
-		case ErrKeyNotExist:
+		case ErrMsgKeyNotExist:
 			logNoticedError(rw, "The specified blob does not exist.", err, http.StatusNotFound)
 		default:
 			logUnhandledError(rw, err)
@@ -157,11 +147,17 @@ func logUnhandledError(rw web.ResponseWriter, err error) {
 	rand.Seed( time.Now().UnixNano())
 	error_id := rand.Intn(999999)
 
-	logger.Error("ErrorID -", error_id, "-", err)
+	logInWrapper(logger.Error, "errorID =", error_id, "-", err)
 	http.Error(rw, fmt.Sprint("Unhandled Exception, errorID = ", error_id), http.StatusInternalServerError)
 }
 
 func logNoticedError(rw web.ResponseWriter, message string, err error, statusCode int) {
-	logger.Notice(message, err)
+	logInWrapper(logger.Notice, message, "Error: ", err)
 	http.Error(rw, message, statusCode)
+}
+
+func logInWrapper(logLevel func(args ...interface{}), args ...interface{}) {
+	logger.ExtraCalldepth += 3
+	logLevel(args ...)
+	logger.ExtraCalldepth -= 3
 }
