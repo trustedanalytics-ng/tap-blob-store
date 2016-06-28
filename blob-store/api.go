@@ -38,7 +38,7 @@ const (
 func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 	blob_id := req.FormValue("blob_id")
 	if(blob_id == "") {
-		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusNotFound)
+		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusBadRequest)
 		return
 	}
 

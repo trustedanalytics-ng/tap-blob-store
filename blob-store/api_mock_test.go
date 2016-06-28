@@ -22,47 +22,70 @@ import (
 
 	"github.com/stretchr/testify/mock"
 	"github.com/minio/minio-go"
+	"github.com/trustedanalytics/blob-store/minioWrapper"
 )
 
+var (
+	ErrUnhandledException = errors.New("Unhandled Error")
+)
 
 type MinioClientMock struct {
 	mock.Mock
 }
 
 func (m *MinioClientMock) MakeBucket(bucketName, regionName string) error {
-	return nil
+	return ErrUnhandledException
 }
 
 func (m *MinioClientMock) BucketExists(bucketName string) error {
-	return nil
+	return ErrUnhandledException
 }
 
 func (m *MinioClientMock) StatObject(bucketName, objectName string) (minio.ObjectInfo, error) {
-	return minio.ObjectInfo{}, nil
+	mo := minio.ObjectInfo{}
+
+	switch objectName {
+	case NewBlobId:
+		return mo, errors.New(ErrMsgKeyNotExist)
+	case ExistedBlobId:
+		return mo, nil
+	default:
+		return mo, ErrUnhandledException
+	}
 }
 
 func (m *MinioClientMock) PutObject(bucketName, objectName string, reader io.Reader, contentType string) (n int64, err error) {
-	return 0, nil
+	switch objectName {
+	case ExistedBlobId:
+		return 0, minioWrapper.ErrKeyAlreadyInUse
+	case NewBlobId:
+		return 0, nil
+	default:
+		return 0, ErrUnhandledException
+	}
 }
 
 func (m *MinioClientMock) GetObject(bucketName, objectName string) (*minio.Object, error) {
 	switch objectName {
 	case NilBlobId:
 		return nil, nil
-	case BlobId:
+	case NewBlobId:
+		return nil, errors.New(ErrMsgKeyNotExist)
+	case ExistedBlobId:
 		return &minio.Object{}, nil
 	default:
-		return nil, errors.New(ErrMsgKeyNotExist)
+		return nil, ErrUnhandledException
 	}
-
-
-	return &minio.Object{}, nil
 }
 
 func (m *MinioClientMock) RemoveObject(bucketName, objectName string) error {
-	if(objectName != BlobId) {
+	switch objectName {
+	case NewBlobId:
 		return errors.New(ErrMsgKeyNotExist)
+	case ExistedBlobId:
+		return nil
+	default:
+		return ErrUnhandledException
 	}
-	return nil
 }
 

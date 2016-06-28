@@ -27,9 +27,12 @@ import (
 )
 
 const (
-	BlobId = "17"
-	NotExistingBlobId = "notExistingBlob"
-	NilBlobId = "blobWithProblems"
+	NewBlobId = "17"
+	UnhandledBlobId = "unhandledBlob"
+	ExistedBlobId = "1234"
+	NilBlobId = "nil"
+
+	TestFileName = "testFile.txt"
 )
 
 
@@ -43,23 +46,30 @@ func TestStoreBlob(t *testing.T) {
 	router, context := prepareMocksAndRouter(t)
 	router.Post(URLblobs, context.StoreBlob)
 
-//	form := nil	//...
-
 	Convey("Test Store Blob", t, func() {
 		Convey("Blob ID not specified. Should returns error message", func() {
-			response := TestUtils.SendRequest("POST", URLblobs, nil, router)
+			bodyBuf, contentType := TestUtils.PrepareForm("", "")
+			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
 			TestUtils.AssertResponse(response, "The blob_id is not specified", 400)
 		})
 		Convey("Blob file not specified, . Should returns error message", func() {
-			response := TestUtils.SendRequest("POST", URLblobs, nil, router)
-			TestUtils.AssertResponse(response, "", 400)
+			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobId, "")
+			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
+			TestUtils.AssertResponse(response, "Blob not specified.", 400)
 		})
 		Convey("Blob ID already exists. Should returns error message", func() {
-			response := TestUtils.SendRequest("POST", URLblobs, nil, router)
-			TestUtils.AssertResponse(response, "", 409)
+			bodyBuf, contentType := TestUtils.PrepareForm(ExistedBlobId, TestFileName)
+			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
+			TestUtils.AssertResponse(response, "The specified Blob ID is already in use", 409)
+		})
+		Convey("Error! Should returns unhandled exception", func() {
+			bodyBuf, contentType := TestUtils.PrepareForm(UnhandledBlobId, TestFileName)
+			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
+			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
 		})
 		Convey("Should returns proper response", func() {
-			response := TestUtils.SendRequest("POST", URLblobs, nil, router)
+			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobId, TestFileName)
+			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
 			TestUtils.AssertResponse(response, "", 201)
 		})
 	})
@@ -71,15 +81,19 @@ func TestRetrieveBlob(t *testing.T) {
 
 	Convey("Test Retrieve Blob", t, func() {
 		Convey("Blob ID not existed. Should returns error message", func() {
-			response := TestUtils.SendRequest("GET", URLblobs + NotExistingBlobId, nil, router)
+			response := TestUtils.SendRequest("GET", URLblobs + NewBlobId, nil, router)
 			TestUtils.AssertResponse(response, "The specified blob does not exist.", 404)
+		})
+		Convey("Error! Should returns unhandled exception", func() {
+			response := TestUtils.SendRequest("GET", URLblobs + UnhandledBlobId, nil, router)
+			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
 		})
 		Convey("Blob ID exist, but Minio contains nil object. Should returns error message", func() {
 			response := TestUtils.SendRequest("GET", URLblobs + NilBlobId, nil, router)
-			TestUtils.AssertResponse(response, "", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
 		})
 		Convey("Should returns proper response", func() {
-			response := TestUtils.SendRequest("GET", URLblobs + BlobId, nil, router)
+			response := TestUtils.SendRequest("GET", URLblobs + ExistedBlobId, nil, router)
 			TestUtils.AssertResponse(response, "", 200)
 		})
 	})
@@ -91,11 +105,15 @@ func TestRemoveBlob(t *testing.T) {
 
 	Convey("Test Remove Blob", t, func() {
 		Convey("Blob ID not existed. Should returns error message", func() {
-			response := TestUtils.SendRequest("DELETE", URLblobs + NotExistingBlobId, nil, router)
-			TestUtils.AssertResponse(response, "", 404)
+			response := TestUtils.SendRequest("DELETE", URLblobs + NewBlobId, nil, router)
+			TestUtils.AssertResponse(response, "The specified blob does not exist.", 404)
+		})
+		Convey("Error! Should returns unhandled exception", func() {
+			response := TestUtils.SendRequest("DELETE", URLblobs + UnhandledBlobId, nil, router)
+			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
 		})
 		Convey("Should returns proper response", func() {
-			response := TestUtils.SendRequest("DELETE", URLblobs + BlobId, nil, router)
+			response := TestUtils.SendRequest("DELETE", URLblobs + ExistedBlobId, nil, router)
 			TestUtils.AssertResponse(response, "", 204)
 		})
 	})
