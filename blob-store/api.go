@@ -56,10 +56,11 @@ func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 
 	err = c.wrappedMinio.StoreInMinio(blob_id, blob)
 	if err != nil {
-		switch err {
-		case minioWrapper.ErrKeyAlreadyInUse:
+		switch err.Error() {
+		case minioWrapper.ErrKeyAlreadyInUse.Error():
 			logNoticedError(rw, "The specified Blob ID is already in use", err, http.StatusConflict)
-		//case Err...:
+		//TODO: github.com/minio/minio/api-errors.go there is something like ErrStorageFull
+		//case TBD:
 		//	logNoticedError(rw, "The space allocated for the Blob Store has been exhausted", err, 507)
 		default:
 			logUnhandledError(rw, err)
