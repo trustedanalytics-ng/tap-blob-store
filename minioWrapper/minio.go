@@ -66,7 +66,7 @@ func CreateWrappedMinio(bucketName string)(wrap *Wrapper, err error) {
 		return nil, err
         }
 
-	wrap = &Wrapper{minioClient, bucketName}
+	wrap = &Wrapper{ReducedMinioClient(*minioClient), bucketName}
 
 	err = wrap.InitMinio()
 	if err != nil {

@@ -26,6 +26,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/gocraft/web"
 	"github.com/trustedanalytics/blob-store/minioWrapper"
+	"io"
 )
 
 const (
@@ -34,6 +35,25 @@ const (
 
 	defaultMaxMemory = 32 << 20 // 32 MB
 )
+
+var (
+	blobStat = minioBlobStat
+	blobSeek = minioBlobSeek
+	blobServe = minioBlobServe
+)
+
+func minioBlobStat(blob *minio.Object) (minio.ObjectInfo, error) {
+	return blob.Stat()
+}
+
+func minioBlobSeek(blob *minio.Object, offset int64, whence int) (n int64, err error) {
+	return blob.Seek(offset, whence)
+}
+
+func minioBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) {
+	http.ServeContent(w,req,name,modtime,content)
+}
+
 
 func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 	blob_id := req.FormValue("blob_id")
@@ -107,16 +127,16 @@ func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	rw.Header().Set("Content-Type", "application/octet-stream")
-	http.ServeContent(rw, req.Request, blob_id, time.Now(), blob)
+	blobServe(rw, req.Request, blob_id, time.Now(), blob)
 }
 
 func seekThroughFile(blob *minio.Object) error {
-	stat, err := blob.Stat()
+	stat, err := blobStat(blob)
 	if err != nil {
 		return err
 	}
 
-	_, err = blob.Seek(stat.Size, os.SEEK_CUR)
+	_, err = blobSeek(blob, stat.Size, os.SEEK_CUR)
 	if err != nil {
 		return err
 	}
@@ -142,7 +162,6 @@ func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 
 	http.Error(rw, "The blob has been successfully removed", http.StatusNoContent)
 }
-
 
 func logUnhandledError(rw web.ResponseWriter, err error) {
 	rand.Seed( time.Now().UnixNano())

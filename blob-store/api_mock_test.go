@@ -23,6 +23,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/minio/minio-go"
 	"github.com/trustedanalytics/blob-store/minioWrapper"
+	"net/http"
+	"time"
 )
 
 var (
@@ -89,3 +91,16 @@ func (m *MinioClientMock) RemoveObject(bucketName, objectName string) error {
 	}
 }
 
+
+func mockBlobStat(blob *minio.Object) (minio.ObjectInfo, error) {
+	if(blob == nil) {
+		return minio.ObjectInfo{}, errors.New("Object is nil")
+	}
+	return minio.ObjectInfo{}, nil
+}
+
+func mockBlobSeek(blob *minio.Object, offset int64, whence int) (n int64, err error) {
+	return 0, nil
+}
+
+func mockBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) { }

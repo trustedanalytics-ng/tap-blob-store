@@ -76,6 +76,21 @@ func TestStoreBlob(t *testing.T) {
 }
 
 func TestRetrieveBlob(t *testing.T) {
+
+	oldBlobStat := blobStat
+	oldBlobSeek := blobSeek
+	oldBlobServe := blobServe
+
+	blobStat = mockBlobStat
+	blobSeek = mockBlobSeek
+	blobServe = mockBlobServe
+
+	defer func () {
+		blobStat = oldBlobStat
+		blobSeek = oldBlobSeek
+		blobServe = oldBlobServe
+	}()
+
 	router, context := prepareMocksAndRouter(t)
 	router.Get(URLblobs + ":blob_id", context.RetrieveBlob)
 
