@@ -17,14 +17,14 @@
 package main
 
 import (
-	"net/http"
 	"github.com/gocraft/web"
+	"github.com/trustedanalytics/blob-store/minio-wrapper"
 	"github.com/trustedanalytics/tap-go-common/logger"
-	"github.com/trustedanalytics/blob-store/minioWrapper"
+	"net/http"
 )
 
-type Context struct{
-	wrappedMinio *minioWrapper.Wrapper
+type Context struct {
+	wrappedMinio *miniowrapper.Wrapper
 }
 
 var (
@@ -32,7 +32,7 @@ var (
 )
 
 const (
-	port = "8080"
+	port       = "8080"
 	bucketName = "blobstore"
 )
 
@@ -40,9 +40,8 @@ const (
 	URLblobs = "/api/v1/blobs/"
 )
 
-
 func main() {
-	wrappedMinio, err := minioWrapper.CreateWrappedMinio(bucketName)
+	wrappedMinio, err := miniowrapper.CreateWrappedMinio(bucketName)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -50,10 +49,10 @@ func main() {
 	context := Context{wrappedMinio}
 	router := web.New(context)
 	router.Post(URLblobs, context.StoreBlob)
-	router.Get(URLblobs + ":blob_id", context.RetrieveBlob)
-	router.Delete(URLblobs + ":blob_id", context.RemoveBlob)
+	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
+	router.Delete(URLblobs+":blob_id", context.RemoveBlob)
 
-	err = http.ListenAndServe("localhost:" + port, router)
+	err = http.ListenAndServe("localhost:"+port, router)
 	if err != nil {
 		logger.Critical("Couldn't serve blob store on port ", port, " Application will be closed now.")
 		logger.Fatal(err)

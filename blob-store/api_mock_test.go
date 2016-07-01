@@ -17,12 +17,11 @@
 package main
 
 import (
-	"io"
 	"errors"
-
-	"github.com/stretchr/testify/mock"
+	"io"
 	"github.com/minio/minio-go"
-	"github.com/trustedanalytics/blob-store/minioWrapper"
+	"github.com/stretchr/testify/mock"
+	"github.com/trustedanalytics/blob-store/minio-wrapper"
 	"net/http"
 	"time"
 )
@@ -47,9 +46,9 @@ func (m *MinioClientMock) StatObject(bucketName, objectName string) (minio.Objec
 	mo := minio.ObjectInfo{}
 
 	switch objectName {
-	case NewBlobId:
+	case NewBlobID:
 		return mo, errors.New(ErrMsgKeyNotExist)
-	case ExistedBlobId:
+	case ExistedBlobID:
 		return mo, nil
 	default:
 		return mo, ErrUnhandledException
@@ -58,9 +57,9 @@ func (m *MinioClientMock) StatObject(bucketName, objectName string) (minio.Objec
 
 func (m *MinioClientMock) PutObject(bucketName, objectName string, reader io.Reader, contentType string) (n int64, err error) {
 	switch objectName {
-	case ExistedBlobId:
-		return 0, minioWrapper.ErrKeyAlreadyInUse
-	case NewBlobId:
+	case ExistedBlobID:
+		return 0, miniowrapper.ErrKeyAlreadyInUse
+	case NewBlobID:
 		return 0, nil
 	default:
 		return 0, ErrUnhandledException
@@ -69,11 +68,11 @@ func (m *MinioClientMock) PutObject(bucketName, objectName string, reader io.Rea
 
 func (m *MinioClientMock) GetObject(bucketName, objectName string) (*minio.Object, error) {
 	switch objectName {
-	case NilBlobId:
+	case NilBlobID:
 		return nil, nil
-	case NewBlobId:
+	case NewBlobID:
 		return nil, errors.New(ErrMsgKeyNotExist)
-	case ExistedBlobId:
+	case ExistedBlobID:
 		return &minio.Object{}, nil
 	default:
 		return nil, ErrUnhandledException
@@ -82,18 +81,17 @@ func (m *MinioClientMock) GetObject(bucketName, objectName string) (*minio.Objec
 
 func (m *MinioClientMock) RemoveObject(bucketName, objectName string) error {
 	switch objectName {
-	case NewBlobId:
+	case NewBlobID:
 		return errors.New(ErrMsgKeyNotExist)
-	case ExistedBlobId:
+	case ExistedBlobID:
 		return nil
 	default:
 		return ErrUnhandledException
 	}
 }
 
-
 func mockBlobStat(blob *minio.Object) (minio.ObjectInfo, error) {
-	if(blob == nil) {
+	if blob == nil {
 		return minio.ObjectInfo{}, errors.New("Object is nil")
 	}
 	return minio.ObjectInfo{}, nil
@@ -103,4 +101,5 @@ func mockBlobSeek(blob *minio.Object, offset int64, whence int) (n int64, err er
 	return 0, nil
 }
 
-func mockBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) { }
+func mockBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) {
+}

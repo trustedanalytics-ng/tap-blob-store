@@ -17,28 +17,28 @@
 package main
 
 import (
-	"net/http"
-	"time"
-	"os"
 	"fmt"
+	"github.com/gocraft/web"
+	"github.com/minio/minio-go"
+	"github.com/trustedanalytics/blob-store/minio-wrapper"
+	"io"
 	"math/rand"
 	"mime/multipart"
-	"github.com/minio/minio-go"
-	"github.com/gocraft/web"
-	"github.com/trustedanalytics/blob-store/minioWrapper"
-	"io"
+	"net/http"
+	"os"
+	"time"
 )
 
 const (
-	ErrMsgKeyNotExist = "The specified key does not exist."
+	ErrMsgKeyNotExist      = "The specified key does not exist."
 	ErrMsgBlobNotSpecified = "http: no such file"
 
 	defaultMaxMemory = 32 << 20 // 32 MB
 )
 
 var (
-	blobStat = minioBlobStat
-	blobSeek = minioBlobSeek
+	blobStat  = minioBlobStat
+	blobSeek  = minioBlobSeek
 	blobServe = minioBlobServe
 )
 
@@ -51,19 +51,18 @@ func minioBlobSeek(blob *minio.Object, offset int64, whence int) (n int64, err e
 }
 
 func minioBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) {
-	http.ServeContent(w,req,name,modtime,content)
+	http.ServeContent(w, req, name, modtime, content)
 }
 
-
 func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
-	blob_id := req.FormValue("blob_id")
-	if(blob_id == "") {
+	blobID := req.FormValue("blob_id")
+	if blobID == "" {
 		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusBadRequest)
 		return
 	}
 
-	logger.Info("Storing blob -", blob_id)
-	blob,err := getBlobFromRequest(rw, req)
+	logger.Info("Storing blob:", blobID)
+	blob, err := getBlobFromRequest(rw, req)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgBlobNotSpecified:
@@ -74,10 +73,10 @@ func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	err = c.wrappedMinio.StoreInMinio(blob_id, blob)
+	err = c.wrappedMinio.StoreInMinio(blobID, blob)
 	if err != nil {
 		switch err.Error() {
-		case minioWrapper.ErrKeyAlreadyInUse.Error():
+		case miniowrapper.ErrKeyAlreadyInUse.Error():
 			logNoticedError(rw, "The specified Blob ID is already in use", err, http.StatusConflict)
 		//TODO: github.com/minio/minio/api-errors.go there is something like ErrStorageFull
 		//case TBD:
@@ -101,15 +100,15 @@ func getBlobFromRequest(w web.ResponseWriter, r *web.Request) (multipart.File, e
 	}
 	defer file.Close()
 
-	logger.Info("Request content -", handler.Header)
+	logger.Info("Request content:", handler.Header)
 	return file, nil
 }
 
 func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
-	blob_id := req.PathParams["blob_id"]
-	logger.Info("Retrieving blob -", blob_id)
+	blobID := req.PathParams["blob_id"]
+	logger.Info("Retrieving blob:", blobID)
 
-	blob, err := c.wrappedMinio.RetrieveFromMinio(blob_id)
+	blob, err := c.wrappedMinio.RetrieveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:
@@ -127,7 +126,7 @@ func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	}
 
 	rw.Header().Set("Content-Type", "application/octet-stream")
-	blobServe(rw, req.Request, blob_id, time.Now(), blob)
+	blobServe(rw, req.Request, blobID, time.Now(), blob)
 }
 
 func seekThroughFile(blob *minio.Object) error {
@@ -141,15 +140,15 @@ func seekThroughFile(blob *minio.Object) error {
 		return err
 	}
 
-	logger.Info("Seek through file. Size of file -", stat.Size)
+	logger.Debug("Seek through file. Size of file:", stat.Size)
 	return nil
 }
 
 func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
-	blob_id := req.PathParams["blob_id"]
-	logger.Info("Removing blob -", blob_id)
+	blobID := req.PathParams["blob_id"]
+	logger.Info("Removing blob:", blobID)
 
-	err := c.wrappedMinio.RemoveFromMinio(blob_id)
+	err := c.wrappedMinio.RemoveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:
@@ -164,11 +163,11 @@ func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 }
 
 func logUnhandledError(rw web.ResponseWriter, err error) {
-	rand.Seed( time.Now().UnixNano())
-	error_id := rand.Intn(999999)
+	rand.Seed(time.Now().UnixNano())
+	errorID := rand.Intn(999999)
 
-	logInWrapper(logger.Error, "errorID =", error_id, "-", err)
-	http.Error(rw, fmt.Sprint("Unhandled Exception, errorID = ", error_id), http.StatusInternalServerError)
+	logInWrapper(logger.Error, "errorID =", errorID, "-", err)
+	http.Error(rw, fmt.Sprint("Unhandled Exception, errorID = ", errorID), http.StatusInternalServerError)
 }
 
 func logNoticedError(rw web.ResponseWriter, message string, err error, statusCode int) {
@@ -178,6 +177,6 @@ func logNoticedError(rw web.ResponseWriter, message string, err error, statusCod
 
 func logInWrapper(logLevel func(args ...interface{}), args ...interface{}) {
 	logger.ExtraCalldepth += 3
-	logLevel(args ...)
+	logLevel(args...)
 	logger.ExtraCalldepth -= 3
 }

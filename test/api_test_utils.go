@@ -49,7 +49,7 @@ func PrepareForm(blobId, filename string) (bodyBuf *bytes.Buffer, contentType st
 	contentType = bodyWriter.FormDataContentType()
 	bodyWriter.Close()
 
-	return //magic :)
+	return
 }
 
 func AssertResponse(rr *httptest.ResponseRecorder, body string, code int) {
