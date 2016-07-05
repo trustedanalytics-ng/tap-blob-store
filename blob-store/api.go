@@ -22,7 +22,6 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/trustedanalytics/blob-store/minio-wrapper"
 	"io"
-	"math/rand"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -163,11 +162,8 @@ func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 }
 
 func logUnhandledError(rw web.ResponseWriter, err error) {
-	rand.Seed(time.Now().UnixNano())
-	errorID := rand.Intn(999999)
-
-	logInWrapper(logger.Error, "errorID =", errorID, "-", err)
-	http.Error(rw, fmt.Sprint("Unhandled Exception, errorID = ", errorID), http.StatusInternalServerError)
+	logInWrapper(logger.Error, "Unhandled Exception, error:", err)
+	http.Error(rw, fmt.Sprint("Unhandled Exception, error:", err), http.StatusInternalServerError)
 }
 
 func logNoticedError(rw web.ResponseWriter, message string, err error, statusCode int) {
