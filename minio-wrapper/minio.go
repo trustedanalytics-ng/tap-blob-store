@@ -21,6 +21,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/trustedanalytics/tap-go-common/logger"
 	"io"
+	"os"
 )
 
 type ReducedMinioClient interface {
@@ -42,10 +43,9 @@ var (
 )
 
 const (
-	//TODO: those information should be stored in kubernetes secrets ?
-	endpoint        = "127.0.0.1:9000"
-	accessKeyID     = "<accessKey>"
-	secretAccessKey = "<secretKey>"
+	endpoint        = os.Getenv("MINIO_HOST") + ":" + os.Getenv("MINIO_PORT")
+	accessKeyID     = os.Getenv("MINIO_ACCESS_KEY")
+	secretAccessKey = os.Getenv("MINIO_SECRET_KEY")
 	ssl             = false
 )
 
