@@ -21,6 +21,7 @@ import (
 	"github.com/trustedanalytics/blob-store/minio-wrapper"
 	"github.com/trustedanalytics/tap-go-common/logger"
 	"net/http"
+	"os"
 )
 
 type Context struct {
@@ -32,7 +33,8 @@ var (
 )
 
 const (
-	port       = "8080"
+	port       = os.Getenv("BLOB_STORE_PORT")
+	host       = os.Getenv("BLOB_STORE_HOST")
 	bucketName = "blobstore"
 )
 
@@ -52,9 +54,9 @@ func main() {
 	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
 	router.Delete(URLblobs+":blob_id", context.RemoveBlob)
 
-	err = http.ListenAndServe("localhost:"+port, router)
+	err = http.ListenAndServe(host+":"+port, router)
 	if err != nil {
-		logger.Critical("Couldn't serve blob store on port ", port, " Application will be closed now.")
+		logger.Critical("Couldn't serve blob store on host:", host, ":", port, " Application will be closed now.")
 		logger.Fatal(err)
 	}
 }
