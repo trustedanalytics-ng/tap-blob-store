@@ -5,10 +5,17 @@ COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
 all: build
 
-build: bin/all
+build: bin/blob-store bin/minio
 	@echo "build complete."
 
-bin/all: verify_gopath
+bin/minio:
+	@if [ ! -f "$(GOBIN)/minio" ]; then\
+		echo "Minio server was not found. It will be downloaded";\
+		wget https://dl.minio.io/server/minio/release/linux-amd64/minio -O $(GOBIN)/minio ;\
+		chmod +x $(GOBIN)/minio ;\
+	fi
+
+bin/blob-store: verify_gopath
 	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
 
@@ -18,14 +25,13 @@ verify_gopath:
 		exit 1 ;\
 	fi
 
-local_bin/all: verify_gopath
+local_bin/blob-store: verify_gopath
 	CGO_ENABLED=0 go install -tags local $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
 
-run: local_bin/all
-    MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key $(GOPATH)/bin/minio server --address localhost:9001 &
-	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9001 BLOB_STORE_PORT=8084 BLOB_STORE_HOST=localhost $(GOPATH)/bin/blob-store
-
+run: local_bin/blob-store bin/minio
+	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key $(GOBIN)/minio server ~/MINIO --address localhost:9001 &\
+    MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9001 BLOB_STORE_PORT=8084 BLOB_STORE_HOST=localhost $(GOBIN)/blob-store
 
 pack: build
 	mkdir -p build
