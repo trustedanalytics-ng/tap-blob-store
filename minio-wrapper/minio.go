@@ -19,7 +19,7 @@ package miniowrapper
 import (
 	"errors"
 	"github.com/minio/minio-go"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics/tapng-go-common/logger"
 	"io"
 	"os"
 )

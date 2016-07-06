@@ -20,10 +20,10 @@ import (
 	"testing"
 
 	"github.com/gocraft/web"
-	"github.com/trustedanalytics/blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 
 	. "github.com/smartystreets/goconvey/convey"
-	TestUtils "github.com/trustedanalytics/blob-store/test"
+	TestUtils "github.com/trustedanalytics/tapng-blob-store/test"
 )
 
 const (

@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"github.com/gocraft/web"
 	"github.com/minio/minio-go"
-	"github.com/trustedanalytics/blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 	"io"
 	"mime/multipart"
 	"net/http"

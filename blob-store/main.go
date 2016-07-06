@@ -18,8 +18,8 @@ package main
 
 import (
 	"github.com/gocraft/web"
-	"github.com/trustedanalytics/blob-store/minio-wrapper"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tapng-go-common/logger"
 	"net/http"
 	"os"
 )
