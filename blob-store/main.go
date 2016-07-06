@@ -30,16 +30,13 @@ type Context struct {
 
 var (
 	logger = logger_wrapper.InitLogger("main")
+	port   = os.Getenv("BLOB_STORE_PORT")
+	host   = os.Getenv("BLOB_STORE_HOST")
 )
 
 const (
-	port       = os.Getenv("BLOB_STORE_PORT")
-	host       = os.Getenv("BLOB_STORE_HOST")
 	bucketName = "blobstore"
-)
-
-const (
-	URLblobs = "/api/v1/blobs/"
+	URLblobs   = "/api/v1/blobs/"
 )
 
 func main() {
