@@ -39,14 +39,14 @@ type Wrapper struct {
 }
 
 var (
-	logger = logger_wrapper.InitLogger("minio")
-)
-
-const (
+	logger          = logger_wrapper.InitLogger("minio")
 	endpoint        = os.Getenv("MINIO_HOST") + ":" + os.Getenv("MINIO_PORT")
 	accessKeyID     = os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey = os.Getenv("MINIO_SECRET_KEY")
-	ssl             = false
+)
+
+const (
+	ssl = false
 )
 
 const (

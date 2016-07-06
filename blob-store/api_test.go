@@ -64,7 +64,7 @@ func TestStoreBlob(t *testing.T) {
 		Convey("Error! Should return unhandled exception", func() {
 			bodyBuf, contentType := TestUtils.PrepareForm(UnhandledBlobID, TestFileName)
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
 		})
 		Convey("Should return proper response", func() {
 			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobID, TestFileName)
@@ -100,11 +100,11 @@ func TestRetrieveBlob(t *testing.T) {
 		})
 		Convey("Error! Should return unhandled exception", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+UnhandledBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
 		})
 		Convey("Blob ID exist, but Minio contains nil object. Should return error message", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+NilBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
 		})
 		Convey("Should return proper response", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+ExistedBlobID, nil, router)
@@ -124,7 +124,7 @@ func TestRemoveBlob(t *testing.T) {
 		})
 		Convey("Error! Should return unhandled exception", func() {
 			response := TestUtils.SendRequest("DELETE", URLblobs+UnhandledBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, errorID = ", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
 		})
 		Convey("Should return proper response", func() {
 			response := TestUtils.SendRequest("DELETE", URLblobs+ExistedBlobID, nil, router)

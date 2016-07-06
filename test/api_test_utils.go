@@ -1,19 +1,17 @@
 package api_test_utils
 
 import (
-	"testing"
-	"net/http"
-	"net/http/httptest"
-
-	"strings"
 	"bytes"
 	"encoding/json"
-
 	"github.com/gocraft/web"
 	"github.com/smartystreets/goconvey/convey"
 	"io"
 	"mime/multipart"
+	"net/http"
+	"net/http/httptest"
 	"os"
+	"strings"
+	"testing"
 )
 
 func SendRequest(rType, path string, body []byte, r *web.Router) *httptest.ResponseRecorder {
@@ -31,7 +29,7 @@ func SendForm(path string, body io.Reader, contentType string, r *web.Router) *h
 	return rr
 }
 
-func PrepareForm(blobId, filename string) (bodyBuf *bytes.Buffer, contentType string)  {
+func PrepareForm(blobId, filename string) (bodyBuf *bytes.Buffer, contentType string) {
 
 	bodyBuf = &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
@@ -40,9 +38,9 @@ func PrepareForm(blobId, filename string) (bodyBuf *bytes.Buffer, contentType st
 		bodyWriter.WriteField("blob_id", blobId)
 	}
 
-	if(filename != "") {
+	if filename != "" {
 		fileWriter, _ := bodyWriter.CreateFormFile("uploadfile", filename)
-		fh, _ := os.Open(filename)	//TODO: It requires Real File, Mock It !!!
+		fh, _ := os.Open(filename) //TODO: It requires Real File, Mock It !!!
 		_, _ = io.Copy(fileWriter, fh)
 	}
 

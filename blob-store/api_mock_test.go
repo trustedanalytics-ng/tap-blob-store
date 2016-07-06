@@ -18,10 +18,10 @@ package main
 
 import (
 	"errors"
-	"io"
 	"github.com/minio/minio-go"
 	"github.com/stretchr/testify/mock"
 	"github.com/trustedanalytics/blob-store/minio-wrapper"
+	"io"
 	"net/http"
 	"time"
 )
