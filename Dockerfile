@@ -18,14 +18,14 @@ MAINTAINER Pawel Pieniazek <pawel.pieniazek@intel.com>
 
 
 RUN mkdir -p /opt/app
-ADD build/blob-store /opt/app
+ADD build/tapng-blob-store /opt/app
 
-RUN chmod +x /opt/app/blob-store
+RUN chmod +x /opt/app/tapng-blob-store
 
 WORKDIR /opt/app/
 
 ENV BLOB_STORE_PORT "8084"
 EXPOSE 8084
 
-ENTRYPOINT ["/opt/app/blob-store"]
+ENTRYPOINT ["/opt/app/tapng-blob-store"]
 CMD [""]

@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package main
+package api
 
 import (
 	"fmt"
 	"github.com/gocraft/web"
 	"github.com/minio/minio-go"
 	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tapng-image-factory/logger"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
 )
+
+type Context struct {
+	WrappedMinio *miniowrapper.Wrapper
+}
 
 const (
 	ErrMsgKeyNotExist      = "The specified key does not exist."
@@ -36,6 +41,7 @@ const (
 )
 
 var (
+	logger    = logger_wrapper.InitLogger("api")
 	blobStat  = minioBlobStat
 	blobSeek  = minioBlobSeek
 	blobServe = minioBlobServe
@@ -72,7 +78,7 @@ func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	err = c.wrappedMinio.StoreInMinio(blobID, blob)
+	err = c.WrappedMinio.StoreInMinio(blobID, blob)
 	if err != nil {
 		switch err.Error() {
 		case miniowrapper.ErrKeyAlreadyInUse.Error():
@@ -107,7 +113,7 @@ func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Retrieving blob:", blobID)
 
-	blob, err := c.wrappedMinio.RetrieveFromMinio(blobID)
+	blob, err := c.WrappedMinio.RetrieveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:
@@ -147,7 +153,7 @@ func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Removing blob:", blobID)
 
-	err := c.wrappedMinio.RemoveFromMinio(blobID)
+	err := c.WrappedMinio.RemoveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:

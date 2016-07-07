@@ -18,15 +18,12 @@ package main
 
 import (
 	"github.com/gocraft/web"
+	"github.com/trustedanalytics/tapng-blob-store/api"
 	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 	"github.com/trustedanalytics/tapng-go-common/logger"
 	"net/http"
 	"os"
 )
-
-type Context struct {
-	wrappedMinio *miniowrapper.Wrapper
-}
 
 var (
 	logger = logger_wrapper.InitLogger("main")
@@ -45,7 +42,7 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	context := Context{wrappedMinio}
+	context := api.Context{wrappedMinio}
 	router := web.New(context)
 	router.Post(URLblobs, context.StoreBlob)
 	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
