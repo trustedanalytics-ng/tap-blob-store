@@ -40,6 +40,7 @@ pack: build
 	mkdir -p build
 	cp -Rf $(GOBIN)/tapng-blob-store build/tapng-blob-store
 	cp -Rf $(GOBIN)/minio build/minio
+	cp -Rf build/ minio/
 	echo "commit_sha=$(COMMIT_SHA)" > build/build_info.ini
 	zip -r -q tapng-blob-store-${VERSION}.zip build/tapng-blob-store build/minio build/build_info.ini
 
