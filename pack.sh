@@ -1,2 +1,2 @@
 #!/bin/bash
-make pack
+make build_anywhere
