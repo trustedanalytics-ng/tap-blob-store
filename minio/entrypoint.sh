@@ -1,3 +1,4 @@
+#!/bin/bash
 # Copyright (c) 2016 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +14,5 @@
 # limitations under the License.
 #
 
-FROM tapimages.us.enableiot.com:8080/tap-base-binary:binary-jessie
-MAINTAINER Pawel Pieniazek <pawel.pieniazek@intel.com>
-
-
-RUN mkdir -p /opt/app
-ADD build/minio /opt/app
-ADD entrypoint.sh /sbin
-
-RUN chmod +x /opt/app/minio
-RUN chmod +x /sbin/entrypoint.sh
-
-WORKDIR /opt/app/
-
-ENV MINIO_STORAGE_PATH "/opt/app/store"
-
-EXPOSE 9000
-
-ENTRYPOINT ["/sbin/entrypoint.sh"]
-CMD [""]
+mkdir -p $MINIO_STORAGE_PATH
+exec /opt/app/minio server $MINIO_STORAGE_PATH
