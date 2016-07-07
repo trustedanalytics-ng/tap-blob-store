@@ -48,9 +48,8 @@ prepare_dirs:
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tapng-blob-store
 
-build_anywhere: prepare_dirs
+change_gopath:
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
-	rm -Rf application && mkdir application
-	cp $(GOPATH)/bin/tapng-blob-store ./application/tapng-blob-store
+
+build_anywhere: prepare_dirs change_gopath pack
