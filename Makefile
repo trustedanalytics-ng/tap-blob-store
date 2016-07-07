@@ -25,11 +25,14 @@ verify_gopath:
 		exit 1 ;\
 	fi
 
+local_bin/minio: bin/minio
+	mkdir -p ~/MINIO
+
 local_bin/blob-store: verify_gopath
 	CGO_ENABLED=0 go install -tags local $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
 
-run: local_bin/blob-store bin/minio
+run: local_bin/blob-store local_bin/minio
 	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key $(GOBIN)/minio server ~/MINIO --address localhost:9001 &\
 	sleep 2 &&\
     MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9001 BLOB_STORE_PORT=8084 BLOB_STORE_HOST=localhost $(GOBIN)/blob-store
