@@ -17,28 +17,43 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/gocraft/web"
-
+	"github.com/trustedanalytics/blob-store/minio-wrapper"
 	"github.com/trustedanalytics/tap-go-common/logger"
+	"net/http"
+	"os"
 )
 
-type Context struct{}
+type Context struct {
+	wrappedMinio *miniowrapper.Wrapper
+}
 
 var (
 	logger = logger_wrapper.InitLogger("main")
-	port = "8080"
+	port   = os.Getenv("BLOB_STORE_PORT")
+	host   = os.Getenv("BLOB_STORE_HOST")
+)
+
+const (
+	bucketName = "blobstore"
+	URLblobs   = "/api/v1/blobs/"
 )
 
 func main() {
-	r := web.New(Context{})
-	r.Post("/api/v1/blobs", (*Context).StoreBlob)
-	r.Get("/api/v1/blobs/:blob_id", (*Context).RetrieveBlob)
-	r.Delete("/api/v1/blobs/:blob_id", (*Context).RemoveBlob)
-
-	err := http.ListenAndServe("localhost:" + port, r)
+	wrappedMinio, err := miniowrapper.CreateWrappedMinio(bucketName)
 	if err != nil {
-		logger.Critical("Couldn't serve blob store on port ", port, " Application will be closed now.")
+		logger.Fatal(err)
+	}
+
+	context := Context{wrappedMinio}
+	router := web.New(context)
+	router.Post(URLblobs, context.StoreBlob)
+	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
+	router.Delete(URLblobs+":blob_id", context.RemoveBlob)
+
+	err = http.ListenAndServe(host+":"+port, router)
+	if err != nil {
+		logger.Critical("Couldn't serve blob store on host:", host, ":", port, " Application will be closed now.")
+		logger.Fatal(err)
 	}
 }
