@@ -1,0 +1,82 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"origin": "github.com/stretchr/testify/vendor/github.com/davecgh/go-spew/spew",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": ""
+		},
+		{
+			"path": "github.com/gocraft/web",
+			"revision": ""
+		},
+		{
+			"path": "github.com/gopherjs/gopherjs/js",
+			"revision": ""
+		},
+		{
+			"path": "github.com/jtolds/gls",
+			"revision": ""
+		},
+		{
+			"path": "github.com/minio/minio-go",
+			"revision": ""
+		},
+		{
+			"path": "github.com/op/go-logging",
+			"revision": ""
+		},
+		{
+			"origin": "github.com/stretchr/testify/vendor/github.com/pmezard/go-difflib/difflib",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/assertions",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/assertions/internal/go-render/render",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/assertions/internal/oglematchers",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/goconvey/convey",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/goconvey/convey/gotest",
+			"revision": ""
+		},
+		{
+			"path": "github.com/smartystreets/goconvey/convey/reporting",
+			"revision": ""
+		},
+		{
+			"origin": "github.com/stretchr/testify/vendor/github.com/stretchr/objx",
+			"path": "github.com/stretchr/objx",
+			"revision": ""
+		},
+		{
+			"path": "github.com/stretchr/testify/assert",
+			"revision": ""
+		},
+		{
+			"path": "github.com/stretchr/testify/mock",
+			"revision": ""
+		},
+		{
+			"path": "github.com/trustedanalytics/tapng-go-common/logger",
+			"revision": ""
+		},
+		{
+			"path": "github.com/trustedanalytics/tapng-image-factory/logger",
+			"revision": ""
+		}
+	],
+	"rootPath": "github.com/trustedanalytics/tapng-blob-store"
+}
