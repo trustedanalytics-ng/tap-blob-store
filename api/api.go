@@ -44,12 +44,11 @@ var (
 )
 
 type ApiContext struct {
-	wrappedMinio *miniowrapper.Wrapper
+	WrappedMinio *miniowrapper.Wrapper
 }
 
-func NewApiContext(wrappedMinio *miniowrapper.Wrapper) *ApiContext {
-	api := ApiContext{wrappedMinio}
-	return &api
+func NewApiContext(wrapper *miniowrapper.Wrapper) *ApiContext {
+	return &ApiContext{wrapper}
 }
 
 func minioBlobStat(blob *minio.Object) (minio.ObjectInfo, error) {
@@ -62,6 +61,12 @@ func minioBlobSeek(blob *minio.Object, offset int64, whence int) (n int64, err e
 
 func minioBlobServe(w http.ResponseWriter, req *http.Request, name string, modtime time.Time, content io.ReadSeeker) {
 	http.ServeContent(w, req, name, modtime, content)
+}
+
+func RegisterRoutes(router *web.Router, context ApiContext) {
+	router.Post(URLblobs, context.StoreBlob)
+	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
+	router.Delete(URLblobs+":blob_id", context.RemoveBlob)
 }
 
 func (c *ApiContext) StoreBlob(rw web.ResponseWriter, req *web.Request) {
@@ -83,7 +88,7 @@ func (c *ApiContext) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	err = c.wrappedMinio.StoreInMinio(blobID, blob)
+	err = c.WrappedMinio.StoreInMinio(blobID, blob)
 	if err != nil {
 		switch err.Error() {
 		case miniowrapper.ErrKeyAlreadyInUse.Error():
@@ -118,7 +123,7 @@ func (c *ApiContext) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Retrieving blob:", blobID)
 
-	blob, err := c.wrappedMinio.RetrieveFromMinio(blobID)
+	blob, err := c.WrappedMinio.RetrieveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:
@@ -158,7 +163,7 @@ func (c *ApiContext) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Removing blob:", blobID)
 
-	err := c.wrappedMinio.RemoveFromMinio(blobID)
+	err := c.WrappedMinio.RemoveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:

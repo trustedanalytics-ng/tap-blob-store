@@ -42,10 +42,8 @@ func main() {
 	}
 
 	context := api.NewApiContext(wrappedMinio)
-	router := web.New(context)
-	router.Post(api.URLblobs, context.StoreBlob)
-	router.Get(api.URLblobs+":blob_id", context.RetrieveBlob)
-	router.Delete(api.URLblobs+":blob_id", context.RemoveBlob)
+	router := web.New(*context)
+	api.RegisterRoutes(router, *context)
 
 	err = http.ListenAndServe(host+":"+port, router)
 	if err != nil {
