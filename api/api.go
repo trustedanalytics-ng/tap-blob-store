@@ -29,15 +29,11 @@ import (
 	"time"
 )
 
-type Context struct {
-	WrappedMinio *miniowrapper.Wrapper
-}
-
 const (
 	ErrMsgKeyNotExist      = "The specified key does not exist."
 	ErrMsgBlobNotSpecified = "http: no such file"
-
-	defaultMaxMemory = 32 << 20 // 32 MB
+	URLblobs               = "/api/v1/blobs/"
+	defaultMaxMemory       = 32 << 20 // 32 MB
 )
 
 var (
@@ -46,6 +42,15 @@ var (
 	blobSeek  = minioBlobSeek
 	blobServe = minioBlobServe
 )
+
+type ApiContext struct {
+	wrappedMinio *miniowrapper.Wrapper
+}
+
+func NewApiContext(wrappedMinio *miniowrapper.Wrapper) *ApiContext {
+	api := ApiContext{wrappedMinio}
+	return &api
+}
 
 func minioBlobStat(blob *minio.Object) (minio.ObjectInfo, error) {
 	return blob.Stat()
@@ -59,7 +64,7 @@ func minioBlobServe(w http.ResponseWriter, req *http.Request, name string, modti
 	http.ServeContent(w, req, name, modtime, content)
 }
 
-func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
+func (c *ApiContext) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.FormValue("blob_id")
 	if blobID == "" {
 		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusBadRequest)
@@ -78,7 +83,7 @@ func (c *Context) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 		return
 	}
 
-	err = c.WrappedMinio.StoreInMinio(blobID, blob)
+	err = c.wrappedMinio.StoreInMinio(blobID, blob)
 	if err != nil {
 		switch err.Error() {
 		case miniowrapper.ErrKeyAlreadyInUse.Error():
@@ -109,11 +114,11 @@ func getBlobFromRequest(w web.ResponseWriter, r *web.Request) (multipart.File, e
 	return file, nil
 }
 
-func (c *Context) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
+func (c *ApiContext) RetrieveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Retrieving blob:", blobID)
 
-	blob, err := c.WrappedMinio.RetrieveFromMinio(blobID)
+	blob, err := c.wrappedMinio.RetrieveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:
@@ -149,11 +154,11 @@ func seekThroughFile(blob *minio.Object) error {
 	return nil
 }
 
-func (c *Context) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
+func (c *ApiContext) RemoveBlob(rw web.ResponseWriter, req *web.Request) {
 	blobID := req.PathParams["blob_id"]
 	logger.Info("Removing blob:", blobID)
 
-	err := c.WrappedMinio.RemoveFromMinio(blobID)
+	err := c.wrappedMinio.RemoveFromMinio(blobID)
 	if err != nil {
 		switch err.Error() {
 		case ErrMsgKeyNotExist:

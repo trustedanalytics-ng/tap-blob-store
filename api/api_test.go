@@ -35,8 +35,8 @@ const (
 	TestFileName = "testFile.txt"
 )
 
-func prepareMocksAndRouter(t *testing.T) (router *web.Router, c Context) {
-	c = Context{&miniowrapper.Wrapper{&MinioClientMock{}, ""}}
+func prepareMocksAndRouter(t *testing.T) (router *web.Router, c ApiContext) {
+	c = ApiContext{&miniowrapper.Wrapper{&MinioClientMock{}, ""}}
 	router = web.New(c)
 	return router, c
 }
