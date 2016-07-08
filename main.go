@@ -33,7 +33,6 @@ var (
 
 const (
 	bucketName = "blobstore"
-	URLblobs   = "/api/v1/blobs/"
 )
 
 func main() {
@@ -42,11 +41,9 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	context := api.Context{wrappedMinio}
-	router := web.New(context)
-	router.Post(URLblobs, context.StoreBlob)
-	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
-	router.Delete(URLblobs+":blob_id", context.RemoveBlob)
+	context := api.NewApiContext(wrappedMinio)
+	router := web.New(*context)
+	api.RegisterRoutes(router, *context)
 
 	err = http.ListenAndServe(host+":"+port, router)
 	if err != nil {

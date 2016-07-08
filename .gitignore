@@ -2,3 +2,7 @@
 .idea/
 
 blob-store/blob-store
+build/
+minio/build/
+temp/
+
