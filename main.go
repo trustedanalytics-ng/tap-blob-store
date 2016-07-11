@@ -45,6 +45,7 @@ func main() {
 	router := web.New(*context)
 	api.RegisterRoutes(router, *context)
 
+	logger.Info("Listening on host:", host+":"+port)
 	err = http.ListenAndServe(host+":"+port, router)
 	if err != nil {
 		logger.Critical("Couldn't serve blob store on host:", host, ":", port, " Application will be closed now.")
