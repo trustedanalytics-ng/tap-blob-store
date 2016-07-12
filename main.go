@@ -50,7 +50,13 @@ func main() {
 	context := api.NewApiContext(wrappedMinio)
 	router := web.New(*context)
 	router.Get("/healthz", Healthz)
-	api.RegisterRoutes(router, *context)
+	apiRouter := router.Subrouter(*context, "/api")
+
+	v1Router := apiRouter.Subrouter(*context, "/v1")
+	api.RegisterRoutes(v1Router, *context)
+
+	v1AliasRouter := apiRouter.Subrouter(*context, "/v1.0")
+	api.RegisterRoutes(v1AliasRouter, *context)
 
 	logger.Info("Listening on host:", host+":"+port)
 	err = http.ListenAndServe(host+":"+port, router)

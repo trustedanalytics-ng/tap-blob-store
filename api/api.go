@@ -32,7 +32,7 @@ import (
 const (
 	ErrMsgKeyNotExist      = "The specified key does not exist."
 	ErrMsgBlobNotSpecified = "http: no such file"
-	URLblobs               = "/api/v1/blobs/"
+	URLblobs               = "/blobs/"
 	defaultMaxMemory       = 32 << 20 // 32 MB
 )
 
