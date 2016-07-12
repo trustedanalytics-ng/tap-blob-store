@@ -17,6 +17,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gocraft/web"
 	"github.com/trustedanalytics/tapng-blob-store/api"
 	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
@@ -35,6 +36,11 @@ const (
 	bucketName = "blobstore"
 )
 
+func Healthz(rw web.ResponseWriter, req *web.Request) {
+	rw.WriteHeader(http.StatusOK)
+	fmt.Fprintf(rw, "ok\n")
+}
+
 func main() {
 	wrappedMinio, err := miniowrapper.CreateWrappedMinio(bucketName)
 	if err != nil {
@@ -43,6 +49,7 @@ func main() {
 
 	context := api.NewApiContext(wrappedMinio)
 	router := web.New(*context)
+	router.Get("/healthz", Healthz)
 	api.RegisterRoutes(router, *context)
 
 	logger.Info("Listening on host:", host+":"+port)
