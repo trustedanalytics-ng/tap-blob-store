@@ -24,8 +24,7 @@ RUN chmod +x /opt/app/tapng-blob-store
 
 WORKDIR /opt/app/
 
-ENV BLOB_STORE_PORT "8084"
-EXPOSE 8084
+EXPOSE 80
 
 ENTRYPOINT ["/opt/app/tapng-blob-store"]
 CMD [""]

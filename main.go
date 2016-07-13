@@ -28,13 +28,20 @@ import (
 
 var (
 	logger = logger_wrapper.InitLogger("main")
-	port   = os.Getenv("BLOB_STORE_PORT")
-	host   = os.Getenv("BLOB_STORE_HOST")
 )
 
 const (
 	bucketName = "blobstore"
 )
+
+func GetListenAddress() string {
+	inter := os.Getenv("BIND_ADDRESS")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "80"
+	}
+	return fmt.Sprintf("%v:%v", inter, port)
+}
 
 func Healthz(rw web.ResponseWriter, req *web.Request) {
 	rw.WriteHeader(http.StatusOK)
@@ -58,10 +65,11 @@ func main() {
 	v1AliasRouter := apiRouter.Subrouter(*context, "/v1.0")
 	api.RegisterRoutes(v1AliasRouter, *context)
 
-	logger.Info("Listening on host:", host+":"+port)
-	err = http.ListenAndServe(host+":"+port, router)
+	bindAddress := GetListenAddress()
+	logger.Info("Listening on host:", bindAddress)
+	err = http.ListenAndServe(bindAddress, router)
 	if err != nil {
-		logger.Critical("Couldn't serve blob store on host:", host, ":", port, " Application will be closed now.")
+		logger.Critical("Couldn't serve blob store on host:", bindAddress, " Application will be closed now.")
 		logger.Fatal(err)
 	}
 }
