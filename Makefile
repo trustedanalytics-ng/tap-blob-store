@@ -1,5 +1,7 @@
 GOBIN=$(GOPATH)/bin
 APP_DIR_LIST=$(shell go list ./... | grep -v /vendor/)
+MINIO_IN_LAB_URL=http://rrceph01.sclab.intel.com/dependencies/minio
+MINIO_EXT_URL=https://dl.minio.io/server/minio/release/linux-amd64/minio
 COMMIT_COUNT=`git rev-list --count origin/master`
 COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
@@ -11,7 +13,7 @@ build: bin/blob-store bin/minio
 bin/minio: verify_gopath
 	@if [ ! -f "$(GOBIN)/minio" ]; then\
 		echo "Minio server was not found. It will be downloaded";\
-		wget https://dl.minio.io/server/minio/release/linux-amd64/minio -O $(GOBIN)/minio ;\
+		wget "$(MINIO_IN_LAB_URL)" -O $(GOBIN)/minio || wget "$(MINIO_EXT_URL)" -O $(GOBIN)/minio ;\
 		chmod +x $(GOBIN)/minio ;\
 	fi
 
