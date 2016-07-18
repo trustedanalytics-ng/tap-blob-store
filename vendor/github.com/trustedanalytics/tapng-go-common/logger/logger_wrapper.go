@@ -17,7 +17,6 @@ package logger_wrapper
 
 import (
 	"os"
-
 	"github.com/op/go-logging"
 )
 

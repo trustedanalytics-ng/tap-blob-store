@@ -21,6 +21,7 @@ import (
 	"github.com/gocraft/web"
 	"github.com/trustedanalytics/tapng-blob-store/api"
 	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
+	httpGoCommon "github.com/trustedanalytics/tapng-go-common/http"
 	"github.com/trustedanalytics/tapng-go-common/logger"
 	"net/http"
 	"os"
@@ -33,15 +34,6 @@ var (
 const (
 	bucketName = "blobstore"
 )
-
-func GetListenAddress() string {
-	inter := os.Getenv("BIND_ADDRESS")
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "80"
-	}
-	return fmt.Sprintf("%v:%v", inter, port)
-}
 
 func Healthz(rw web.ResponseWriter, req *web.Request) {
 	rw.WriteHeader(http.StatusOK)
@@ -65,11 +57,10 @@ func main() {
 	v1AliasRouter := apiRouter.Subrouter(*context, "/v1.0")
 	api.RegisterRoutes(v1AliasRouter, *context)
 
-	bindAddress := GetListenAddress()
-	logger.Info("Listening on host:", bindAddress)
-	err = http.ListenAndServe(bindAddress, router)
-	if err != nil {
-		logger.Critical("Couldn't serve blob store on host:", bindAddress, " Application will be closed now.")
-		logger.Fatal(err)
+	if os.Getenv("BLOB_STORE_SSL_CERT_FILE_LOCATION") != "" {
+		httpGoCommon.StartServerTLS(os.Getenv("BLOB_STORE_SSL_CERT_FILE_LOCATION"),
+			os.Getenv("BLOB_STORE_SSL_KEY_FILE_LOCATION"), router)
+	} else {
+		httpGoCommon.StartServer(router)
 	}
 }
