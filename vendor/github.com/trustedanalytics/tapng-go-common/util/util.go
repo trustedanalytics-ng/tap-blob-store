@@ -24,7 +24,7 @@ import (
 
 	"github.com/gocraft/web"
 
-	"github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics/tapng-go-common/logger"
 )
 
 var logger = logger_wrapper.InitLogger("api")
@@ -68,5 +68,11 @@ func Respond500(rw web.ResponseWriter, err error) {
 func Respond404(rw web.ResponseWriter, err error) {
 	logger.Error("Respond404: reason: error ", err)
 	rw.WriteHeader(http.StatusNotFound)
+	fmt.Fprintf(rw, "%s", err.Error())
+}
+
+func Respond400(rw web.ResponseWriter, err error) {
+	logger.Error("Respond400: reason: error ", err)
+	rw.WriteHeader(http.StatusBadRequest)
 	fmt.Fprintf(rw, "%s", err.Error())
 }
