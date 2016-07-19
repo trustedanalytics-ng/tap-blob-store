@@ -1,0 +1,16 @@
+---
+
+  kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      name: blob-store
+    name: blob-store
+  spec:
+    ports:
+      - port: 80
+        protocol: "TCP"
+        name: "rest"
+    selector:
+      app: blob-store
+    type: NodePort

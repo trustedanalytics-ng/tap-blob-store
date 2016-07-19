@@ -1,0 +1,65 @@
+---
+
+  apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: blob-store
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: blob-store
+      spec:
+        containers:
+        - name: blob-store
+          image: "tapng-blob-store:latest"
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: MINIO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: minio
+                  key: hostname
+            - name: MINIO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: minio
+                  key: port
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: secret-key
+        - name: minio
+          image: "tapng-blob-store/minio:latest"
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 9000
+              protocol: TCP
+          env:
+            - name: MINIO_STORAGE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: minio
+                  key: storage-path
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: access-key
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio
+                  key: secret-key
+        restartPolicy: "Always"
+        dnsPolicy: "ClusterFirst"
