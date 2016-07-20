@@ -7,7 +7,7 @@ COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
 all: build
 
-build: bin/blob-store bin/minio
+build: change_gopath bin/blob-store bin/minio
 	@echo "build complete."
 
 bin/minio: verify_gopath
@@ -57,3 +57,17 @@ change_gopath:
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
 
 build_anywhere: prepare_dirs change_gopath pack
+
+docker_build: build_anywhere
+	docker build -t tapng-blob-store .
+	docker build -t tapng-blob-store/minio ./minio/
+
+kubernetes_deploy:
+	kubectl create -f service.yaml
+	kubectl create -f minio-configmap.yaml
+	kubectl create -f minio-secret.yaml
+	kubectl create -f deployment.yaml
+
+kubernetes_update: docker_build
+	kubectl delete -f deployment.yaml
+	kubectl create -f deployment.yaml

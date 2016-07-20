@@ -1,0 +1,12 @@
+---
+
+  kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: minio
+    labels:
+      id: minio
+  data:
+    hostname: "localhost"
+    port: "9000"
+    storage-path: "/opt/app/store"
