@@ -33,7 +33,7 @@ const (
 	ErrMsgKeyNotExist      = "The specified key does not exist."
 	ErrMsgBlobNotSpecified = "http: no such file"
 	URLblobs               = "/blobs/"
-	defaultMaxMemory       = 32 << 20 // 32 MB
+	defaultMaxMemory       = 128 << 20 // 128 MB
 )
 
 var (

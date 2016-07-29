@@ -70,8 +70,16 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "9pb3BzgX9eT3c7F5pXxpxjPcQqo=",
+			"path": "github.com/trustedanalytics/tapng-go-common/http",
+			"revision": "891973fd09fa5149aa93ff44924a15febeb27bfe",
+			"revisionTime": "2016-07-29T09:59:26Z"
+		},
+		{
+			"checksumSHA1": "Ka/efssR1AekoBuWWQuilDydAvM=",
 			"path": "github.com/trustedanalytics/tapng-go-common/logger",
-			"revision": ""
+			"revision": "891973fd09fa5149aa93ff44924a15febeb27bfe",
+			"revisionTime": "2016-07-29T09:59:26Z"
 		},
 		{
 			"path": "github.com/trustedanalytics/tapng-image-factory/logger",
