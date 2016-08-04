@@ -70,20 +70,64 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "9pb3BzgX9eT3c7F5pXxpxjPcQqo=",
+			"checksumSHA1": "9Okrb2zoKaeJw/ci/oZEjnu3sE0=",
+			"path": "github.com/trustedanalytics/tapng-blob-store",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "jgqzmyGyTzOreyXEfZQKBL/R7SI=",
+			"path": "github.com/trustedanalytics/tapng-blob-store/api",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "dhz3yNRiW5xFCxSbtiDeRNLkRds=",
+			"path": "github.com/trustedanalytics/tapng-blob-store/client",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "vQ44ukIwD6fvf8w7Sh2epvKklI8=",
+			"path": "github.com/trustedanalytics/tapng-blob-store/minio-wrapper",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "moEOJ2QRYEcUJscebUpe1tfd2+A=",
+			"path": "github.com/trustedanalytics/tapng-blob-store/temp/src/github.com/trustedanalytics/tapng-blob-store",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "32JBk4+BZqvyNrKfq5EBeYxmLTM=",
+			"path": "github.com/trustedanalytics/tapng-blob-store/test",
+			"revision": "03ecb3d711c5251a827c9a5fedde8cf97a5e0684",
+			"revisionTime": "2016-07-29T14:47:17Z"
+		},
+		{
+			"checksumSHA1": "7fCP/C+bx2JNjZuMFV+n4m0tY6k=",
 			"path": "github.com/trustedanalytics/tapng-go-common/http",
-			"revision": "891973fd09fa5149aa93ff44924a15febeb27bfe",
-			"revisionTime": "2016-07-29T09:59:26Z"
+			"revision": "b55d94c2f0a329b8b6fc4f7cabdccca2a73b1662",
+			"revisionTime": "2016-08-03T13:25:21Z"
 		},
 		{
-			"checksumSHA1": "Ka/efssR1AekoBuWWQuilDydAvM=",
+			"checksumSHA1": "RVbaAnp5aHoeOAwEiyyd7EHax+w=",
 			"path": "github.com/trustedanalytics/tapng-go-common/logger",
-			"revision": "891973fd09fa5149aa93ff44924a15febeb27bfe",
-			"revisionTime": "2016-07-29T09:59:26Z"
+			"revision": "b55d94c2f0a329b8b6fc4f7cabdccca2a73b1662",
+			"revisionTime": "2016-08-03T13:25:21Z"
 		},
 		{
+			"checksumSHA1": "KqO+KmnDXezLoZTFxotI1GF3R0g=",
+			"path": "github.com/trustedanalytics/tapng-image-factory/app",
+			"revision": "fbef80dc7da47c3106f52bf27c237f19d9d22372",
+			"revisionTime": "2016-08-04T11:52:57Z"
+		},
+		{
+			"checksumSHA1": "U8/9eBKkILjtMc9rJb2A3kIrEY4=",
 			"path": "github.com/trustedanalytics/tapng-image-factory/logger",
-			"revision": ""
+			"revision": "fbef80dc7da47c3106f52bf27c237f19d9d22372",
+			"revisionTime": "2016-08-04T11:52:57Z"
 		}
 	],
 	"rootPath": "github.com/trustedanalytics/tapng-blob-store"
