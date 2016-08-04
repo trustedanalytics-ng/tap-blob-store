@@ -7,7 +7,7 @@ COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
 all: build
 
-build: prepare_dirs change_gopath bin/blob-store bin/minio
+build: bin/blob-store
 	@echo "build complete."
 
 bin/minio: verify_gopath
@@ -48,12 +48,17 @@ local_bin/blob-store: verify_gopath
 	CGO_ENABLED=0 go install -tags local $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
 
-run: change_gopath local_bin/blob-store local_bin/minio
+run: local_bin/blob-store local_bin/minio
 	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key $(GOBIN)/minio server ~/MINIO --address localhost:9000 &\
 	sleep 2 &&\
 	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9000 PORT=8084 BIND_ADDRESS=localhost $(GOBIN)/tapng-blob-store
 
-pack: build
+build_anywhere: prepare_dirs
+	$(eval GOPATH=$(shell cd ./temp; pwd))
+	$(eval GOBIN=$(GOPATH)/bin)
+	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo -pkgdir /temp/pkg $(APP_DIR_LIST)
+	$(MAKE) bin/minio
 	mkdir -p build
 	cp -Rf $(GOBIN)/tapng-blob-store build/tapng-blob-store
 	cp -Rf $(GOBIN)/minio build/minio
@@ -66,12 +71,6 @@ prepare_dirs:
 	mkdir -p ./temp/src/github.com/trustedanalytics/tapng-blob-store
 	$(eval REPOFILES=$(shell pwd)/*)
 	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tapng-blob-store
-
-change_gopath:
-	$(eval GOPATH=$(shell cd ./temp; pwd))
-	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
-
-build_anywhere: prepare_dirs change_gopath pack
 
 docker_build: build_anywhere
 	docker build -t tapng-blob-store .
