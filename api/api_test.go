@@ -20,9 +20,9 @@ import (
 	"testing"
 
 	"github.com/gocraft/web"
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
-
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 	TestUtils "github.com/trustedanalytics/tapng-blob-store/test"
 )
 

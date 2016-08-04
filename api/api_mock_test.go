@@ -18,12 +18,14 @@ package api
 
 import (
 	"errors"
-	"github.com/minio/minio-go"
-	"github.com/stretchr/testify/mock"
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/minio/minio-go"
+	"github.com/stretchr/testify/mock"
+
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
 )
 
 var (

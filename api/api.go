@@ -18,15 +18,17 @@ package api
 
 import (
 	"fmt"
-	"github.com/gocraft/web"
-	"github.com/minio/minio-go"
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
-	"github.com/trustedanalytics/tapng-image-factory/logger"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/gocraft/web"
+	"github.com/minio/minio-go"
+
+	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tapng-go-common/logger"
 )
 
 const (

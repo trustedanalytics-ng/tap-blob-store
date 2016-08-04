@@ -18,10 +18,12 @@ package miniowrapper
 
 import (
 	"errors"
-	"github.com/minio/minio-go"
-	"github.com/trustedanalytics/tapng-go-common/logger"
 	"io"
 	"os"
+
+	"github.com/minio/minio-go"
+
+	"github.com/trustedanalytics/tapng-go-common/logger"
 )
 
 type ReducedMinioClient interface {

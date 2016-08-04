@@ -3,8 +3,6 @@ package api_test_utils
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/gocraft/web"
-	"github.com/smartystreets/goconvey/convey"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -12,6 +10,9 @@ import (
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/gocraft/web"
+	"github.com/smartystreets/goconvey/convey"
 )
 
 func SendRequest(rType, path string, body []byte, r *web.Router) *httptest.ResponseRecorder {
