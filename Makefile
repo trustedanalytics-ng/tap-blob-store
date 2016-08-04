@@ -58,7 +58,11 @@ build_anywhere: prepare_dirs
 	$(eval GOBIN=$(GOPATH)/bin)
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
 	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
-	$(MAKE) bin/minio
+	@if [ ! -f "$(GOBIN)/minio" ]; then\
+		echo "Minio server was not found. It will be downloaded";\
+		wget "$(MINIO_IN_LAB_URL)" -O $(GOBIN)/minio || wget "$(MINIO_EXT_URL)" -O $(GOBIN)/minio ;\
+		chmod +x $(GOBIN)/minio ;\
+	fi
 	mkdir -p build
 	cp -Rf $(GOBIN)/tapng-blob-store build/tapng-blob-store
 	cp -Rf $(GOBIN)/minio build/minio
