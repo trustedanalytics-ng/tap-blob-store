@@ -57,7 +57,7 @@ build_anywhere: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval GOBIN=$(GOPATH)/bin)
 	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
-	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo -pkgdir /temp/pkg $(APP_DIR_LIST)
+	GOPATH=$(GOPATH) CGO_ENABLED=0 go install -tags netgo -pkgdir ./temp/pkg $(APP_DIR_LIST)
 	$(MAKE) bin/minio
 	mkdir -p build
 	cp -Rf $(GOBIN)/tapng-blob-store build/tapng-blob-store
