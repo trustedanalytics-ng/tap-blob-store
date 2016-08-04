@@ -7,7 +7,7 @@ COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
 all: build
 
-build: change_gopath bin/blob-store bin/minio
+build: prepare_dirs change_gopath bin/blob-store bin/minio
 	@echo "build complete."
 
 bin/minio: verify_gopath
@@ -26,6 +26,20 @@ verify_gopath:
 		echo "GOPATH not set. You need to set GOPATH before run this command";\
 		exit 1 ;\
 	fi
+
+deps_fetch_specific: bin/govendor
+	@if [ "$(DEP_URL)" = "" ]; then\
+		echo "DEP_URL not set. Run this comand as follow:";\
+		echo " make deps_fetch_specific DEP_URL=github.com/nu7hatch/gouuid";\
+	exit 1 ;\
+	fi
+	@echo "Fetching specific dependency in newest versions"
+	$(GOBIN)/govendor fetch -v $(DEP_URL)
+
+deps_update_tapng: verify_gopath
+	$(GOBIN)/govendor update github.com/trustedanalytics/...
+	rm -Rf vendor/github.com/trustedanalytics/tapng-blob-store
+	@echo "Done"
 
 local_bin/minio: bin/minio
 	mkdir -p ~/MINIO
@@ -46,6 +60,7 @@ pack: build
 	cp -Rf build/ minio/
 	echo "commit_sha=$(COMMIT_SHA)" > build/build_info.ini
 	zip -r -q tapng-blob-store-${VERSION}.zip build/tapng-blob-store build/minio build/build_info.ini
+	rm -Rf ./temp
 
 prepare_dirs:
 	mkdir -p ./temp/src/github.com/trustedanalytics/tapng-blob-store
@@ -62,7 +77,7 @@ docker_build: build_anywhere
 	docker build -t tapng-blob-store .
 	docker build -t tapng-blob-store/minio ./minio/
 
-kubernetes_deploy:
+kubernetes_deploy: docker_build
 	kubectl create -f service.yaml
 	kubectl create -f minio-configmap.yaml
 	kubectl create -f minio-secret.yaml
