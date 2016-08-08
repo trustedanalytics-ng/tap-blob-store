@@ -5,4 +5,5 @@ blob-store/blob-store
 build/
 minio/build/
 temp/
+tapng-blob-store
 
