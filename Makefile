@@ -71,7 +71,6 @@ build_anywhere: prepare_dirs
 	echo "commit_sha=$(COMMIT_SHA)" > build/build_info.ini
 	zip -r -q tapng-blob-store-${VERSION}.zip build/tapng-blob-store build/minio build/build_info.ini
 	rm -Rf ./temp
-	rm -Rf ./build
 
 prepare_dirs:
 	mkdir -p ./temp/src/github.com/trustedanalytics/tapng-blob-store
