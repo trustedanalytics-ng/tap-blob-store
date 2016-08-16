@@ -1,14 +1,14 @@
 package client
 
 import (
-	"fmt"
-	"net/http"
-
 	"bytes"
-	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
-	"github.com/trustedanalytics/tapng-go-common/logger"
+	"fmt"
 	"io"
 	"mime/multipart"
+	"net/http"
+
+	brokerHttp "github.com/trustedanalytics/tapng-go-common/http"
+	"github.com/trustedanalytics/tapng-go-common/logger"
 )
 
 var (
