@@ -1,0 +1,18 @@
+---
+
+  apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: blob-store
+    labels:
+      id: blob-store
+  data:
+    endpoint: "{{ blob_store_service_details.api_response[0]['spec']['clusterIP'] }}:80"
+    blob-store-kubernetes-service-name: "BLOB_STORE"
+    blob-store-host: "http://{{ blob_store_service_details.api_response[0]['spec']['clusterIP'] }}"
+    blob-store-port: "80"
+    blob-store-user: "admin"
+    blob-store-pass: "password"
+    blob-store-ssl-cert-file-location: ""
+    blob-store-ssl-key-file-location: ""
+    blob-store-ssl-ca-file-location: ""
