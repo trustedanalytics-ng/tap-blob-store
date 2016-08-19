@@ -66,6 +66,8 @@ func minioBlobServe(w http.ResponseWriter, req *http.Request, name string, modti
 }
 
 func RegisterRoutes(router *web.Router, context ApiContext) {
+	router.Middleware(context.BasicAuthorizeMiddleware)
+
 	router.Post(URLblobs, context.StoreBlob)
 	router.Get(URLblobs+":blob_id", context.RetrieveBlob)
 	router.Delete(URLblobs+":blob_id", context.RemoveBlob)

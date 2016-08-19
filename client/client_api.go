@@ -22,7 +22,7 @@ type TapBlobStoreApi interface {
 }
 
 func NewTapBlobStoreApiWithBasicAuth(address, username, password string) (*TapBlobStoreApiConnector, error) {
-	client, _, err := brokerHttp.GetHttpClientWithBasicAuth()
+	client, _, err := brokerHttp.GetHttpClient()
 	if err != nil {
 		return nil, err
 	}
@@ -78,14 +78,24 @@ func (c *TapBlobStoreApiConnector) StoreBlob(blob_id string, file multipart.File
 	contentType := bodyWriter.FormDataContentType()
 	bodyWriter.Close()
 
+	var req *http.Request
+	req, _ = http.NewRequest("POST", connector.Url, bytes.NewBuffer(bodyBuf.Bytes()))
+	req.Header.Add("Authorization", brokerHttp.GetBasicAuthHeader(connector.BasicAuth))
+	brokerHttp.SetContentType(req, contentType)
+
 	logger.Infof("Doing: POST %v Sending %v bytes", connector.Url, size)
-	_, err = http.Post(connector.Url, contentType, bodyBuf)
+	_, err = connector.Client.Do(req)
+	if err != nil {
+		logger.Error("ERROR: Make http request POST", err)
+		return err
+	}
+
 	return err
 }
 
 func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blob_id))
-	size, err := brokerHttp.DownloadBinary(connector.Url, connector.BasicAuth, connector.Client, dest)
+	size, err := brokerHttp.DownloadBinary(connector.Url, brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client, dest)
 	if err != nil {
 		return err
 	}
@@ -95,7 +105,7 @@ func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error
 
 func (c *TapBlobStoreApiConnector) DeleteBlob(blob_id string) (int, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blob_id))
-	status, _, err := brokerHttp.RestDELETE(connector.Url, "", connector.BasicAuth, connector.Client)
+	status, _, err := brokerHttp.RestDELETE(connector.Url, "", brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
 	if err != nil {
 		return status, err
 	}
