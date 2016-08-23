@@ -35,7 +35,7 @@ const (
 	ErrMsgKeyNotExist      = "The specified key does not exist."
 	ErrMsgBlobNotSpecified = "http: no such file"
 	URLblobs               = "/blobs/"
-	defaultMaxMemory       = 128 << 20 // 128 MB
+	defaultMaxMemory       = 32 << 20 // 32 MB
 )
 
 var (
@@ -91,7 +91,6 @@ func (c *ApiContext) StoreBlob(rw web.ResponseWriter, req *web.Request) {
 		}
 		return
 	}
-
 	err = c.WrappedMinio.StoreInMinio(blobID, blob)
 	if err != nil {
 		switch err.Error() {
@@ -117,7 +116,6 @@ func getBlobFromRequest(w web.ResponseWriter, r *web.Request) (multipart.File, e
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close()
 
 	logger.Info("Request content:", handler.Header)
 	return file, nil
