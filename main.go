@@ -19,10 +19,10 @@ package main
 import (
 	"fmt"
 	"github.com/gocraft/web"
-	"github.com/trustedanalytics/tapng-blob-store/api"
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
-	httpGoCommon "github.com/trustedanalytics/tapng-go-common/http"
-	"github.com/trustedanalytics/tapng-go-common/logger"
+	"github.com/trustedanalytics/tap-blob-store/api"
+	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
+	httpGoCommon "github.com/trustedanalytics/tap-go-common/http"
+	"github.com/trustedanalytics/tap-go-common/logger"
 	"net/http"
 	"os"
 )

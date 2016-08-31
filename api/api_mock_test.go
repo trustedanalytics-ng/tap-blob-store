@@ -25,7 +25,7 @@ import (
 	"github.com/minio/minio-go"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
+	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
 )
 
 var (

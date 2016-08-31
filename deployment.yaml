@@ -13,7 +13,7 @@
       spec:
         containers:
         - name: blob-store
-          image: "tapng-blob-store:latest"
+          image: "tap-blob-store:latest"
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 80
@@ -40,7 +40,7 @@
                   name: minio
                   key: secret-key
         - name: minio
-          image: "tapng-blob-store/minio:latest"
+          image: "tap-blob-store/minio:latest"
           imagePullPolicy: "IfNotPresent"
           ports:
             - containerPort: 9000

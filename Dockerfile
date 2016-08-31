@@ -18,13 +18,13 @@ MAINTAINER Pawel Pieniazek <pawel.pieniazek@intel.com>
 
 
 RUN mkdir -p /opt/app
-ADD build/tapng-blob-store /opt/app
+ADD build/tap-blob-store /opt/app
 
-RUN chmod +x /opt/app/tapng-blob-store
+RUN chmod +x /opt/app/tap-blob-store
 
 WORKDIR /opt/app/
 
 EXPOSE 80
 
-ENTRYPOINT ["/opt/app/tapng-blob-store"]
+ENTRYPOINT ["/opt/app/tap-blob-store"]
 CMD [""]

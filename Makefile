@@ -36,9 +36,9 @@ deps_fetch_specific: bin/govendor
 	@echo "Fetching specific dependency in newest versions"
 	$(GOBIN)/govendor fetch -v $(DEP_URL)
 
-deps_update_tapng: verify_gopath
+deps_update_tap: verify_gopath
 	$(GOBIN)/govendor update github.com/trustedanalytics/...
-	rm -Rf vendor/github.com/trustedanalytics/tapng-blob-store
+	rm -Rf vendor/github.com/trustedanalytics/tap-blob-store
 	@echo "Done"
 
 local_bin/minio: bin/minio
@@ -51,12 +51,12 @@ local_bin/blob-store: verify_gopath
 run: local_bin/blob-store local_bin/minio
 	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key $(GOBIN)/minio server ~/MINIO --address localhost:9000 &\
 	sleep 2 &&\
-	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9000 PORT=8084 BIND_ADDRESS=localhost $(GOBIN)/tapng-blob-store
+	MINIO_ACCESS_KEY=access_key MINIO_SECRET_KEY=secret_key MINIO_HOST=localhost MINIO_PORT=9000 PORT=8084 BIND_ADDRESS=localhost $(GOBIN)/tap-blob-store
 
 build_anywhere: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval GOBIN=$(GOPATH)/bin)
-	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tapng-blob-store/... | grep -v /vendor/))
+	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tap-blob-store/... | grep -v /vendor/))
 	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -tags netgo $(APP_DIR_LIST)
 	@if [ ! -f "$(GOBIN)/minio" ]; then\
 		mkdir -p ./temp/bin;\
@@ -65,21 +65,21 @@ build_anywhere: prepare_dirs
 		chmod +x $(GOBIN)/minio ;\
 	fi
 	mkdir -p build
-	cp -Rf ./tapng-blob-store build/tapng-blob-store
+	cp -Rf ./tap-blob-store build/tap-blob-store
 	cp -Rf $(GOBIN)/minio build/minio
 	cp -Rf build/ minio/
 	echo "commit_sha=$(COMMIT_SHA)" > build/build_info.ini
-	zip -r -q tapng-blob-store-${VERSION}.zip build/tapng-blob-store build/minio build/build_info.ini
+	zip -r -q tap-blob-store-${VERSION}.zip build/tap-blob-store build/minio build/build_info.ini
 	rm -Rf ./temp
 
 prepare_dirs:
-	mkdir -p ./temp/src/github.com/trustedanalytics/tapng-blob-store
+	mkdir -p ./temp/src/github.com/trustedanalytics/tap-blob-store
 	$(eval REPOFILES=$(shell pwd)/*)
-	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tapng-blob-store
+	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tap-blob-store
 
 docker_build: build_anywhere
-	docker build -t tapng-blob-store .
-	docker build -t tapng-blob-store/minio ./minio/
+	docker build -t tap-blob-store .
+	docker build -t tap-blob-store/minio ./minio/
 
 kubernetes_deploy: docker_build
 	kubectl create -f service.yaml

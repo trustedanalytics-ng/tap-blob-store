@@ -22,8 +22,8 @@ import (
 	"github.com/gocraft/web"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/trustedanalytics/tapng-blob-store/minio-wrapper"
-	TestUtils "github.com/trustedanalytics/tapng-blob-store/test"
+	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
+	TestUtils "github.com/trustedanalytics/tap-blob-store/test"
 )
 
 const (
