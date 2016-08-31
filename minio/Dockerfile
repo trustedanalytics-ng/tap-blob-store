@@ -27,6 +27,8 @@ RUN chmod +x /sbin/entrypoint.sh
 WORKDIR /opt/app/
 
 ENV MINIO_STORAGE_PATH "/opt/app/store"
+ENV MINIO_ACCESS_KEY "access_key"
+ENV MINIO_SECRET_KEY "secret_key"
 
 EXPOSE 9000
 
