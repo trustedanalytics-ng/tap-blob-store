@@ -1,0 +1,73 @@
+swagger: '2.0'
+info:
+  version: "1"
+  title: tap-blob-store
+
+  description: Blob Store is a temporary staging area for arbitrary binary objects.
+schemes:
+  - https
+produces:
+  - application/json
+consumes:
+  - application/json
+paths:
+  /healthz:
+    get:
+      summary: Get health status
+      responses:
+        200:
+          description: OK
+        500:
+          description: Unexpected error
+  /api/v1/blobs:
+    post:
+      summary: Create Blob
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: body_id
+          description: Blob id
+          in: formData
+          required: true
+          type: string
+        - name: uploadfile
+          description: Uploaded file which will be stored as blob
+          in: formData
+          required: true
+          type: file
+      responses:
+        201:
+          description: Blob created
+        400:
+          description: Bad request. Provided wrong body.
+          schema:
+            type: string
+        500:
+          description: Unexpected error
+  /api/v1/blobs/{blob_id}:
+    get:
+      summary: Retrieve Blob
+      parameters:
+        - name: blob_id
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Service object
+          schema:
+            type: file
+        500:
+          description: Unexpected error
+    delete:
+      summary: Delete Blob
+      parameters:
+        - name: blob_id
+          in: path
+          required: true
+          type: string
+      responses:
+        204:
+          description: Blob deleted
+        500:
+          description: Unexpected error
