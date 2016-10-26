@@ -22,16 +22,24 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/gocraft/web"
 
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 )
 
-var logger = logger_wrapper.InitLogger("api")
+var logger, _ = commonLogger.InitLogger("api")
 
 type MessageResponse struct {
 	Message string `json:"message"`
+}
+
+func UuidToShortDnsName(uuid string) string {
+	if len(uuid) < 15 {
+		return "x" + strings.Replace(uuid, "-", "", -1)
+	}
+	return "x" + strings.Replace(uuid[0:15], "-", "", -1)
 }
 
 func ReadJsonFromByte(content []byte, retstruct interface{}) error {

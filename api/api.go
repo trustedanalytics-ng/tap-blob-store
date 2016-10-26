@@ -28,7 +28,7 @@ import (
 	"github.com/minio/minio-go"
 
 	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 )
 
 const (
@@ -39,7 +39,7 @@ const (
 )
 
 var (
-	logger    = logger_wrapper.InitLogger("api")
+	logger, _ = commonLogger.InitLogger("api")
 	blobStat  = minioBlobStat
 	blobSeek  = minioBlobSeek
 	blobServe = minioBlobServe

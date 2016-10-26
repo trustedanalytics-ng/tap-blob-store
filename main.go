@@ -22,13 +22,13 @@ import (
 	"github.com/trustedanalytics/tap-blob-store/api"
 	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
 	httpGoCommon "github.com/trustedanalytics/tap-go-common/http"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 	"net/http"
 	"os"
 )
 
 var (
-	logger = logger_wrapper.InitLogger("main")
+	logger, _ = commonLogger.InitLogger("main")
 )
 
 const (

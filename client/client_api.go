@@ -8,11 +8,11 @@ import (
 	"net/http"
 
 	brokerHttp "github.com/trustedanalytics/tap-go-common/http"
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 )
 
 var (
-	logger = logger_wrapper.InitLogger("client")
+	logger, _ = commonLogger.InitLogger("client")
 )
 
 type TapBlobStoreApi interface {

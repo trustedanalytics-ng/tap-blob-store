@@ -70,58 +70,55 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "ve3A6HVO7l2L2ghIz9Y19PKPa+s=",
+			"checksumSHA1": "0o1JzUeFuZoua4yMnTmynLSBnRU=",
 			"path": "github.com/trustedanalytics/tap-blob-store",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
+			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
+			"revisionTime": "2016-09-14T10:38:56Z"
 		},
 		{
-			"checksumSHA1": "jgqzmyGyTzOreyXEfZQKBL/R7SI=",
+			"checksumSHA1": "89d5aHQCa7JiXC5VDFj8xnwkSSo=",
 			"path": "github.com/trustedanalytics/tap-blob-store/api",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
+			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
+			"revisionTime": "2016-09-14T10:38:56Z"
 		},
 		{
-			"checksumSHA1": "dhz3yNRiW5xFCxSbtiDeRNLkRds=",
+			"checksumSHA1": "TcNqBF4ixmMvCcHqHBzu2M54ffM=",
+			"origin": "github.com/trustedanalytics/tap-blob-store/vendor/github.com/trustedanalytics/tap-blob-store/client",
 			"path": "github.com/trustedanalytics/tap-blob-store/client",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
+			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
+			"revisionTime": "2016-09-14T10:38:56Z"
 		},
 		{
-			"checksumSHA1": "vQ44ukIwD6fvf8w7Sh2epvKklI8=",
+			"checksumSHA1": "aRacqILMCYsUkJxO0h+RsR4On7A=",
 			"path": "github.com/trustedanalytics/tap-blob-store/minio-wrapper",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
+			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
+			"revisionTime": "2016-09-14T10:38:56Z"
 		},
 		{
-			"checksumSHA1": "moEOJ2QRYEcUJscebUpe1tfd2+A=",
-			"path": "github.com/trustedanalytics/tap-blob-store/temp/src/github.com/trustedanalytics/tap-blob-store",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
-		},
-		{
-			"checksumSHA1": "32JBk4+BZqvyNrKfq5EBeYxmLTM=",
+			"checksumSHA1": "NEYJgaxb2Pmc1l9hSddZUi9ouok=",
 			"path": "github.com/trustedanalytics/tap-blob-store/test",
-			"revision": "fefc31bf8396d59330fd679d2b0c45ce6299a1be",
-			"revisionTime": "2016-08-04T13:29:32Z"
+			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
+			"revisionTime": "2016-09-14T10:38:56Z"
 		},
 		{
-			"checksumSHA1": "FHH5vvuyglwKP3h05rYJdf29KQg=",
+			"checksumSHA1": "ukXcanknqGE85PrDaHsU+ZkLYsM=",
+			"origin": "github.com/trustedanalytics/tap-blob-store/vendor/github.com/trustedanalytics/tap-go-common/http",
 			"path": "github.com/trustedanalytics/tap-go-common/http",
-			"revision": "447b84567c96c43e6e2ef79e4f97be545f11fa0d",
-			"revisionTime": "2016-08-17T13:54:27Z"
+			"revision": "4c88996dd70ff957cedf47809d64f2c3f547c69d",
+			"revisionTime": "2016-10-25T08:10:19Z"
 		},
 		{
-			"checksumSHA1": "RVbaAnp5aHoeOAwEiyyd7EHax+w=",
+			"checksumSHA1": "O4sIfCHeupMT91S+wt73AAfH4bQ=",
+			"origin": "github.com/trustedanalytics/tap-blob-store/vendor/github.com/trustedanalytics/tap-go-common/logger",
 			"path": "github.com/trustedanalytics/tap-go-common/logger",
-			"revision": "ca34c9d2950032f078db7054a2206e7989a86ab3",
-			"revisionTime": "2016-08-08T10:11:52Z"
+			"revision": "4c88996dd70ff957cedf47809d64f2c3f547c69d",
+			"revisionTime": "2016-10-25T08:10:19Z"
 		},
 		{
-			"checksumSHA1": "uy1dWe+cZBlJvG9+8+8eCteT/IA=",
+			"checksumSHA1": "BbvzLWfb5MEwh9gphQDZYykLu78=",
 			"path": "github.com/trustedanalytics/tap-go-common/util",
-			"revision": "1ea89cdbff35f7e6a78e33f091c60dfd291a2a6c",
-			"revisionTime": "2016-08-19T07:31:20Z"
+			"revision": "4c88996dd70ff957cedf47809d64f2c3f547c69d",
+			"revisionTime": "2016-10-25T08:10:19Z"
 		},
 		{
 			"checksumSHA1": "KqO+KmnDXezLoZTFxotI1GF3R0g=",

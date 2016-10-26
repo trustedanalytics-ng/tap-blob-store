@@ -23,7 +23,7 @@ import (
 
 	"github.com/minio/minio-go"
 
-	"github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
 )
 
 type ReducedMinioClient interface {
@@ -41,7 +41,7 @@ type Wrapper struct {
 }
 
 var (
-	logger          = logger_wrapper.InitLogger("minio")
+	logger, _       = commonLogger.InitLogger("minio")
 	endpoint        = os.Getenv("MINIO_HOST") + ":" + os.Getenv("MINIO_PORT")
 	accessKeyID     = os.Getenv("MINIO_ACCESS_KEY")
 	secretAccessKey = os.Getenv("MINIO_SECRET_KEY")
