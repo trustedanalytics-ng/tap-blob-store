@@ -44,14 +44,6 @@ func NewTapBlobStoreApiWithBasicAuth(address, username, password string) (*TapBl
 	return &TapBlobStoreApiConnector{address, username, password, client}, nil
 }
 
-func NewTapBlobStoreApiWithSSLAndBasicAuth(address, username, password, certPemFile, keyPemFile, caPemFile string) (*TapBlobStoreApiConnector, error) {
-	client, _, err := brokerHttp.GetHttpClientWithCertAndCaFromFile(certPemFile, keyPemFile, caPemFile)
-	if err != nil {
-		return nil, err
-	}
-	return &TapBlobStoreApiConnector{address, username, password, client}, nil
-}
-
 type TapBlobStoreApiConnector struct {
 	Address  string
 	Username string
