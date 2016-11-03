@@ -18,14 +18,13 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
 	"github.com/gocraft/web"
-
 	"github.com/trustedanalytics/tap-blob-store/api"
 	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
 	httpGoCommon "github.com/trustedanalytics/tap-go-common/http"
 	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	"net/http"
+	"os"
 )
 
 var (
@@ -38,7 +37,7 @@ const (
 
 func Healthz(rw web.ResponseWriter, req *web.Request) {
 	rw.WriteHeader(http.StatusOK)
-	fmt.Fprint(rw, "ok\n")
+	fmt.Fprintf(rw, "ok\n")
 }
 
 func main() {
@@ -58,5 +57,10 @@ func main() {
 	v1AliasRouter := apiRouter.Subrouter(*context, "/v1.0")
 	api.RegisterRoutes(v1AliasRouter, *context)
 
-	httpGoCommon.StartServer(router)
+	if os.Getenv("BLOB_STORE_SSL_CERT_FILE_LOCATION") != "" {
+		httpGoCommon.StartServerTLS(os.Getenv("BLOB_STORE_SSL_CERT_FILE_LOCATION"),
+			os.Getenv("BLOB_STORE_SSL_KEY_FILE_LOCATION"), router)
+	} else {
+		httpGoCommon.StartServer(router)
+	}
 }
