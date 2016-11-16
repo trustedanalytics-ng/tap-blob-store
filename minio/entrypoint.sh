@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright (c) 2016 Intel Corporation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+#!/bin/bash
 mkdir -p $MINIO_STORAGE_PATH
 exec /opt/app/minio server $MINIO_STORAGE_PATH | sed -u "s/$MINIO_ACCESS_KEY/\$MINIO_ACCESS_KEY/g; s/$MINIO_SECRET_KEY/\$MINIO_SECRET_KEY/g"
