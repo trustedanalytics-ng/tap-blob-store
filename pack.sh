@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2016 Intel Corporation
 #
@@ -14,5 +15,4 @@
 # limitations under the License.
 #
 
-#!/bin/bash
 make build_anywhere

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (c) 2016 Intel Corporation
 #
@@ -14,6 +15,5 @@
 # limitations under the License.
 #
 
-#!/bin/bash
 mkdir -p $MINIO_STORAGE_PATH
 exec /opt/app/minio server $MINIO_STORAGE_PATH | sed -u "s/$MINIO_ACCESS_KEY/\$MINIO_ACCESS_KEY/g; s/$MINIO_SECRET_KEY/\$MINIO_SECRET_KEY/g"
