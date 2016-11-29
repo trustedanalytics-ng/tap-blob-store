@@ -14,8 +14,9 @@
 #
 GOBIN=$(GOPATH)/bin
 APP_DIR_LIST=$(shell go list ./... | grep -v /vendor/)
-MINIO_IN_LAB_URL=http://rrceph01.sclab.intel.com/dependencies/minio
-MINIO_EXT_URL=https://dl.minio.io/server/minio/release/linux-amd64/minio
+MINIO_VERSION=minio.RELEASE.2016-06-03T19-32-05Z
+MINIO_IN_LAB_URL=http://rrceph01.sclab.intel.com/dependencies/$(MINIO_VERSION)
+MINIO_EXT_URL=https://dl.minio.io/server/minio/release/linux-amd64/archive/$(MINIO_VERSION)
 COMMIT_COUNT=`git rev-list --count origin/master`
 COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
