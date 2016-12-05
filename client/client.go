@@ -16,7 +16,6 @@
 package client
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -53,51 +52,68 @@ type TapBlobStoreApiConnector struct {
 
 func (c *TapBlobStoreApiConnector) getApiConnector(url string) brokerHttp.ApiConnector {
 	return brokerHttp.ApiConnector{
-		BasicAuth: &brokerHttp.BasicAuth{c.Username, c.Password},
+		BasicAuth: &brokerHttp.BasicAuth{User: c.Username, Password: c.Password},
 		Client:    c.Client,
 		Url:       url,
 	}
 }
 
-func (c *TapBlobStoreApiConnector) StoreBlob(blob_id string, file multipart.File) error {
+func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File) error {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs", c.Address))
 
-	bodyBuf := &bytes.Buffer{}
-	bodyWriter := multipart.NewWriter(bodyBuf)
+	bodyPipeReader, bodyPipeWriter := io.Pipe()
+	defer bodyPipeReader.Close()
 
-	err := bodyWriter.WriteField("blob_id", blob_id)
+	go writeBlobAsync(bodyPipeWriter, blobID, file)
+
+	var req *http.Request
+	req, err := http.NewRequest("POST", connector.Url, bodyPipeReader)
 	if err != nil {
+		logger.Error("Creating request failed: ", err)
 		return err
+	}
+
+	req.Header.Add("Authorization", brokerHttp.GetBasicAuthHeader(connector.BasicAuth))
+
+	logger.Infof("Doing: POST %v ", connector.Url)
+	_, err = connector.Client.Do(req)
+	if err != nil {
+		logger.Error("Make http request POST failed: ", err)
+		return err
+	}
+
+	return nil
+}
+
+func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File) {
+	var err error
+	defer func() {
+		if err != nil {
+			pw.CloseWithError(err)
+		} else {
+			pw.Close()
+		}
+	}()
+
+	bodyWriter := multipart.NewWriter(pw)
+	defer bodyWriter.Close()
+
+	err = bodyWriter.WriteField("blob_id", blobID)
+	if err != nil {
+		logger.Errorf("bodyWriter.WriteField(%v) failed: %v", blobID, err)
+		return
 	}
 
 	fileWriter, err := bodyWriter.CreateFormFile("uploadfile", "blob.tar.gz")
 	if err != nil {
-
-		fmt.Println("error writing to buffer")
-		return err
+		logger.Errorf("bodyWriter.CreateFormFile(\"uploadfile\", \"blob.tar.gz\") failed: %v", err)
+		return
 	}
 
-	size, err := io.Copy(fileWriter, file)
+	_, err = io.Copy(fileWriter, blobFile)
 	if err != nil {
-		return err
+		logger.Errorf("copying to writer failed: %v", err)
 	}
-
-	contentType := bodyWriter.FormDataContentType()
-	bodyWriter.Close()
-
-	var req *http.Request
-	req, _ = http.NewRequest("POST", connector.Url, bytes.NewBuffer(bodyBuf.Bytes()))
-	req.Header.Add("Authorization", brokerHttp.GetBasicAuthHeader(connector.BasicAuth))
-	brokerHttp.SetContentType(req, contentType)
-
-	logger.Infof("Doing: POST %v Sending %v bytes", connector.Url, size)
-	_, err = connector.Client.Do(req)
-	if err != nil {
-		logger.Error("ERROR: Make http request POST", err)
-		return err
-	}
-
-	return err
 }
 
 func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error {
