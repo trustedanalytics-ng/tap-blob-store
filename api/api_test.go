@@ -36,7 +36,7 @@ const (
 )
 
 func prepareMocksAndRouter(t *testing.T) (router *web.Router, c ApiContext) {
-	c = ApiContext{&miniowrapper.Wrapper{&MinioClientMock{}, ""}}
+	c = ApiContext{WrappedMinio: &miniowrapper.Wrapper{Mc: &MinioClientMock{}, BucketName: ""}}
 	router = web.New(c)
 	return router, c
 }

@@ -62,7 +62,12 @@ func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File)
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs", c.Address))
 
 	bodyPipeReader, bodyPipeWriter := io.Pipe()
-	defer bodyPipeReader.Close()
+	defer func() {
+		err := bodyPipeReader.Close()
+		if err != nil {
+			logger.Error("Pipe reader closing error: ", err)
+		}
+	}()
 
 	go writeBlobAsync(bodyPipeWriter, blobID, file)
 
@@ -89,14 +94,25 @@ func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File) {
 	var err error
 	defer func() {
 		if err != nil {
-			pw.CloseWithError(err)
+			err:=pw.CloseWithError(err)
+			if err != nil {
+				logger.Error("Pipe writer closing with error: ", err)
+			}
 		} else {
-			pw.Close()
+			err:=pw.Close()
+			if err != nil {
+				logger.Error("Pipe writer closing error: ", err)
+			}
 		}
 	}()
 
 	bodyWriter := multipart.NewWriter(pw)
-	defer bodyWriter.Close()
+	defer func(){
+		err := bodyWriter.Close()
+		if err != nil {
+			logger.Error("Body writer closing with error: ", err)
+		}
+	}()
 
 	err = bodyWriter.WriteField("blob_id", blobID)
 	if err != nil {
@@ -129,9 +145,6 @@ func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error
 func (c *TapBlobStoreApiConnector) DeleteBlob(blob_id string) (int, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blob_id))
 	status, _, err := brokerHttp.RestDELETE(connector.Url, "", brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
-	if err != nil {
-		return status, err
-	}
-
+	
 	return status, err
 }
