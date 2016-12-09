@@ -30,9 +30,9 @@ var (
 )
 
 type TapBlobStoreApi interface {
-	StoreBlob(blob_id string, file multipart.File) error
-	GetBlob(blob_id string, dest io.Writer) error
-	DeleteBlob(blob_id string) (int, error)
+	StoreBlob(blobID string, file multipart.File) error
+	GetBlob(blobID string, dest io.Writer) error
+	DeleteBlob(blobID string) (int, error)
 }
 
 func NewTapBlobStoreApiWithBasicAuth(address, username, password string) (*TapBlobStoreApiConnector, error) {
@@ -59,6 +59,7 @@ func (c *TapBlobStoreApiConnector) getApiConnector(url string) brokerHttp.ApiCon
 }
 
 func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File) error {
+	logger.Debug("started, blobID: ", blobID)
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs", c.Address))
 
 	bodyPipeReader, bodyPipeWriter := io.Pipe()
@@ -69,7 +70,8 @@ func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File)
 		}
 	}()
 
-	go writeBlobAsync(bodyPipeWriter, blobID, file)
+	contentTypeChannel := make(chan string)
+	go writeBlobAsync(bodyPipeWriter, blobID, file, contentTypeChannel)
 
 	var req *http.Request
 	req, err := http.NewRequest("POST", connector.Url, bodyPipeReader)
@@ -79,29 +81,42 @@ func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File)
 	}
 
 	req.Header.Add("Authorization", brokerHttp.GetBasicAuthHeader(connector.BasicAuth))
+	logger.Debug("reading content type from channel")
+	contentType := <- contentTypeChannel
+	brokerHttp.SetContentType(req, contentType)
 
 	logger.Infof("Doing: POST %v ", connector.Url)
-	_, err = connector.Client.Do(req)
+	logger.Debug("starting sending request to blob store")
+	response, err := connector.Client.Do(req)
 	if err != nil {
 		logger.Error("Make http request POST failed: ", err)
 		return err
 	}
-
+	if response.StatusCode != http.StatusCreated {
+		err = fmt.Errorf("blob-store returned bad status code: %v", response.StatusCode)
+		logger.Error(err)
+		return err
+	}
+	logger.Debug("sending request to blob store finished")
 	return nil
 }
 
-func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File) {
+func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File, contentTypeCh chan string) {
+	logger.Debug("started")
 	var err error
 	defer func() {
 		if err != nil {
-			err:=pw.CloseWithError(err)
+			logger.Debug("closing pipe writer with error: ", err)
+			err := pw.CloseWithError(err)
 			if err != nil {
-				logger.Error("Pipe writer closing with error: ", err)
+				logger.Error("pipe writer closing error: ", err)
 			}
+
 		} else {
-			err:=pw.Close()
+			logger.Debug("closing pipe writer normally")
+			err := pw.Close()
 			if err != nil {
-				logger.Error("Pipe writer closing error: ", err)
+				logger.Error("pipe writer closing error: ", err)
 			}
 		}
 	}()
@@ -110,30 +125,34 @@ func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File) {
 	defer func(){
 		err := bodyWriter.Close()
 		if err != nil {
-			logger.Error("Body writer closing with error: ", err)
+			logger.Error("body writer closing error: ", err)
 		}
 	}()
-
-	err = bodyWriter.WriteField("blob_id", blobID)
+	contentType := bodyWriter.FormDataContentType()
+	logger.Debugf("sending content type (%v) to channel", contentType)
+	contentTypeCh <- contentType
+	logger.Debugf("writing blob id (%v) to body", blobID)
+	err = bodyWriter.WriteField("blobID", blobID)
 	if err != nil {
 		logger.Errorf("bodyWriter.WriteField(%v) failed: %v", blobID, err)
 		return
 	}
-
+	logger.Debug("creating form file with blob")
 	fileWriter, err := bodyWriter.CreateFormFile("uploadfile", "blob.tar.gz")
 	if err != nil {
 		logger.Errorf("bodyWriter.CreateFormFile(\"uploadfile\", \"blob.tar.gz\") failed: %v", err)
 		return
 	}
-
+	logger.Debug("starting copying file to pipe")
 	_, err = io.Copy(fileWriter, blobFile)
 	if err != nil {
 		logger.Errorf("copying to writer failed: %v", err)
 	}
+	logger.Debug("copying file to pipe finished")
 }
 
-func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blob_id))
+func (c *TapBlobStoreApiConnector) GetBlob(blobID string, dest io.Writer) error {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blobID))
 	size, err := brokerHttp.DownloadBinary(connector.Url, brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client, dest)
 	if err != nil {
 		return err
@@ -142,8 +161,8 @@ func (c *TapBlobStoreApiConnector) GetBlob(blob_id string, dest io.Writer) error
 	return err
 }
 
-func (c *TapBlobStoreApiConnector) DeleteBlob(blob_id string) (int, error) {
-	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blob_id))
+func (c *TapBlobStoreApiConnector) DeleteBlob(blobID string) (int, error) {
+	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blobID))
 	status, _, err := brokerHttp.RestDELETE(connector.Url, "", brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
 	
 	return status, err
