@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 
-FROM tapimages.us.enableiot.com:8080/tap-base-binary:binary-jessie
+FROM tapimages:8080/tap-base-binary:binary-jessie
 MAINTAINER Pawel Pieniazek <pawel.pieniazek@intel.com>
 
 
