@@ -74,9 +74,9 @@ func RegisterRoutes(router *web.Router, context ApiContext) {
 }
 
 func (c *ApiContext) StoreBlob(rw web.ResponseWriter, req *web.Request) {
-	blobID := req.FormValue("blob_id")
+	blobID := req.FormValue("blobID")
 	if blobID == "" {
-		logNoticedError(rw, "The blob_id is not specified.", nil, http.StatusBadRequest)
+		logNoticedError(rw, "The blobID is not specified.", nil, http.StatusBadRequest)
 		return
 	}
 
