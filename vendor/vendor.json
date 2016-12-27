@@ -70,64 +70,22 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "0o1JzUeFuZoua4yMnTmynLSBnRU=",
-			"path": "github.com/trustedanalytics/tap-blob-store",
-			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
-			"revisionTime": "2016-09-14T10:38:56Z"
-		},
-		{
-			"checksumSHA1": "89d5aHQCa7JiXC5VDFj8xnwkSSo=",
-			"path": "github.com/trustedanalytics/tap-blob-store/api",
-			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
-			"revisionTime": "2016-09-14T10:38:56Z"
-		},
-		{
-			"checksumSHA1": "TcNqBF4ixmMvCcHqHBzu2M54ffM=",
-			"path": "github.com/trustedanalytics/tap-blob-store/client",
-			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
-			"revisionTime": "2016-09-14T10:38:56Z"
-		},
-		{
-			"checksumSHA1": "aRacqILMCYsUkJxO0h+RsR4On7A=",
-			"path": "github.com/trustedanalytics/tap-blob-store/minio-wrapper",
-			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
-			"revisionTime": "2016-09-14T10:38:56Z"
-		},
-		{
-			"checksumSHA1": "NEYJgaxb2Pmc1l9hSddZUi9ouok=",
-			"path": "github.com/trustedanalytics/tap-blob-store/test",
-			"revision": "4951cbe4d0348413ef23a77bf2d455d9d3e9b40d",
-			"revisionTime": "2016-09-14T10:38:56Z"
-		},
-		{
-			"checksumSHA1": "ukXcanknqGE85PrDaHsU+ZkLYsM=",
+			"checksumSHA1": "TMAWOipcdZIj8HqfHZqYrWh/two=",
 			"path": "github.com/trustedanalytics/tap-go-common/http",
-			"revision": "4c88996dd70ff957cedf47809d64f2c3f547c69d",
-			"revisionTime": "2016-10-25T08:10:19Z"
+			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
+			"revisionTime": "2016-12-27T09:18:44Z"
 		},
 		{
 			"checksumSHA1": "O4sIfCHeupMT91S+wt73AAfH4bQ=",
 			"path": "github.com/trustedanalytics/tap-go-common/logger",
-			"revision": "4c88996dd70ff957cedf47809d64f2c3f547c69d",
-			"revisionTime": "2016-10-25T08:10:19Z"
+			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
+			"revisionTime": "2016-12-27T09:18:44Z"
 		},
 		{
-			"checksumSHA1": "An5LrDExKu0PzLhnINCwA4QDrbA=",
+			"checksumSHA1": "05MzhouJMf4FGs8YGNGJ9c/mIpg=",
 			"path": "github.com/trustedanalytics/tap-go-common/util",
-			"revision": "2034a1fbad0f4051cacd5abef9b34df18a5c5dc0",
-			"revisionTime": "2016-11-04T13:49:23Z"
-		},
-		{
-			"checksumSHA1": "KqO+KmnDXezLoZTFxotI1GF3R0g=",
-			"path": "github.com/trustedanalytics/tap-image-factory/app",
-			"revision": "fbef80dc7da47c3106f52bf27c237f19d9d22372",
-			"revisionTime": "2016-08-04T11:52:57Z"
-		},
-		{
-			"checksumSHA1": "U8/9eBKkILjtMc9rJb2A3kIrEY4=",
-			"path": "github.com/trustedanalytics/tap-image-factory/logger",
-			"revision": "7979ac068cc93c930b035d7ee44b8959b243da04",
-			"revisionTime": "2016-08-08T11:05:30Z"
+			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
+			"revisionTime": "2016-12-27T09:18:44Z"
 		}
 	],
 	"rootPath": "github.com/trustedanalytics/tap-blob-store"

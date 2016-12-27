@@ -82,7 +82,7 @@ func (c *TapBlobStoreApiConnector) StoreBlob(blobID string, file multipart.File)
 
 	req.Header.Add("Authorization", brokerHttp.GetBasicAuthHeader(connector.BasicAuth))
 	logger.Debug("reading content type from channel")
-	contentType := <- contentTypeChannel
+	contentType := <-contentTypeChannel
 	brokerHttp.SetContentType(req, contentType)
 
 	logger.Infof("Doing: POST %v ", connector.Url)
@@ -122,7 +122,7 @@ func writeBlobAsync(pw *io.PipeWriter, blobID string, blobFile multipart.File, c
 	}()
 
 	bodyWriter := multipart.NewWriter(pw)
-	defer func(){
+	defer func() {
 		err := bodyWriter.Close()
 		if err != nil {
 			logger.Error("body writer closing error: ", err)
@@ -164,6 +164,6 @@ func (c *TapBlobStoreApiConnector) GetBlob(blobID string, dest io.Writer) error 
 func (c *TapBlobStoreApiConnector) DeleteBlob(blobID string) (int, error) {
 	connector := c.getApiConnector(fmt.Sprintf("%s/api/v1/blobs/%s", c.Address, blobID))
 	status, _, err := brokerHttp.RestDELETE(connector.Url, "", brokerHttp.GetBasicAuthHeader(connector.BasicAuth), connector.Client)
-	
+
 	return status, err
 }

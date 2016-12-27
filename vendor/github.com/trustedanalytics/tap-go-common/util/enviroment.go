@@ -17,14 +17,15 @@
 package util
 
 import (
-	"os"
-	"fmt"
 	"errors"
+	"fmt"
+	"os"
+	"strconv"
 )
 
-func GetConnectionAddressFromEnvs(componentName string) (address string, err error) {
-	hostEnvName := componentName+"_HOST"
-	portEnvName := componentName+"_PORT"
+func GetConnectionHostAndPortFromEnvs(componentName string) (string, int, error) {
+	hostEnvName := componentName + "_HOST"
+	portEnvName := componentName + "_PORT"
 
 	var errorArray []error
 
@@ -33,22 +34,37 @@ func GetConnectionAddressFromEnvs(componentName string) (address string, err err
 		errorArray = append(errorArray, err)
 	}
 
-	port, err := GetEnvOrError(portEnvName)
+	portStr, err := GetEnvOrError(portEnvName)
 	if err != nil {
 		errorArray = append(errorArray, err)
 	}
 
-	address = fmt.Sprintf("%s:%s", host, port)
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		errorArray = append(errorArray, fmt.Errorf("port has incorrect value %s: %v", portStr, err))
+	}
 
 	if len(errorArray) > 0 {
-		err = sumErrors(errorArray)
+		return "", -1, sumErrors(errorArray)
 	}
-	return
+
+	return host, port, nil
+}
+
+func GetConnectionAddressFromEnvs(componentName string) (string, error) {
+	host, port, err := GetConnectionHostAndPortFromEnvs(componentName)
+	if err != nil {
+		return "", err
+	}
+
+	address := fmt.Sprintf("%s:%d", host, port)
+
+	return address, nil
 }
 
 func GetConnectionCredentialsFromEnvs(componentName string) (username, password string, err error) {
-	userEnvName := componentName+"_USER"
-	passEnvName := componentName+"_PASS"
+	userEnvName := componentName + "_USER"
+	passEnvName := componentName + "_PASS"
 
 	var errorArray []error
 
@@ -87,10 +103,10 @@ func GetConnectionParametersFromEnv(componentName string) (address, username, pa
 	return
 }
 
-func GetEnvOrError(envName string) (string, error){
+func GetEnvOrError(envName string) (string, error) {
 	value := os.Getenv(envName)
 	if value == "" {
-		return value, errors.New(envName+" not set!")
+		return value, errors.New(envName + " not set!")
 	}
 	return value, nil
 }
