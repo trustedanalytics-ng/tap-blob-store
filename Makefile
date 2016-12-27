@@ -20,6 +20,7 @@ MINIO_EXT_URL=https://dl.minio.io/server/minio/release/linux-amd64/archive/$(MIN
 COMMIT_COUNT=`git rev-list --count origin/master`
 COMMIT_SHA=`git rev-parse HEAD`
 VERSION=0.1.0
+APP_NAME=tap-blob-store
 all: build
 
 build: bin/blob-store
@@ -33,8 +34,9 @@ bin/minio: verify_gopath
 	fi
 
 bin/blob-store: verify_gopath
-	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
 	go fmt $(APP_DIR_LIST)
+	CGO_ENABLED=0 go install -tags netgo $(APP_DIR_LIST)
+	mkdir -p application && cp -f $(GOBIN)/$(APP_NAME) ./application/$(APP_NAME)
 
 verify_gopath:
 	@if [ -z "$(GOPATH)" ] || [ "$(GOPATH)" = "" ]; then\
@@ -53,7 +55,7 @@ deps_fetch_specific: bin/govendor
 
 deps_update_tap: verify_gopath
 	$(GOBIN)/govendor update github.com/trustedanalytics/...
-	rm -Rf vendor/github.com/trustedanalytics/tap-blob-store
+	$(GOBIN)/govendor remove github.com/trustedanalytics/$(APP_NAME)/...
 	@echo "Done"
 
 local_bin/minio: bin/minio
