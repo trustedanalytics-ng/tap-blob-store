@@ -107,3 +107,6 @@ kubernetes_deploy: docker_build
 kubernetes_update: docker_build
 	kubectl delete -f deployment.yaml
 	kubectl create -f deployment.yaml
+
+test: verify_gopath
+	CGO_ENABLED=0 go test -tags netgo --cover $(APP_DIR_LIST)

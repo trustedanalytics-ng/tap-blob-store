@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -45,32 +46,40 @@ func SendForm(path string, body io.Reader, contentType string, r *web.Router) *h
 	return rr
 }
 
-func PrepareForm(blobId, filename string) (bodyBuf *bytes.Buffer, contentType string) {
-
+func PrepareForm(blobId, filepath string) (bodyBuf *bytes.Buffer, contentType string) {
 	bodyBuf = &bytes.Buffer{}
 	bodyWriter := multipart.NewWriter(bodyBuf)
+	defer bodyWriter.Close()
 
 	if blobId != "" {
-		bodyWriter.WriteField("blob_id", blobId)
+		bodyWriter.WriteField("blobID", blobId)
 	}
 
-	if filename != "" {
-		fileWriter, _ := bodyWriter.CreateFormFile("uploadfile", filename)
-		fh, _ := os.Open(filename) //TODO: It requires Real File, Mock It !!!
-		_, _ = io.Copy(fileWriter, fh)
+	if filepath != "" {
+		fileWriter, _ := bodyWriter.CreateFormFile("uploadfile", filepath)
+		fh, err := os.Open(filepath) //TODO: It requires Real File, Mock It !!!
+		if err != nil {
+			panic(err)
+		}
+		_, err = io.Copy(fileWriter, fh)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	contentType = bodyWriter.FormDataContentType()
-	bodyWriter.Close()
-
 	return
 }
 
 func AssertResponse(rr *httptest.ResponseRecorder, body string, code int) {
 	if body != "" {
-		convey.So(strings.TrimSpace(string(rr.Body.Bytes())), convey.ShouldContainSubstring, body)
+		convey.Convey("Body should be expected", func() {
+			convey.So(strings.TrimSpace(string(rr.Body.Bytes())), convey.ShouldContainSubstring, body)
+		})
 	}
-	convey.So(rr.Code, convey.ShouldEqual, code)
+	convey.Convey("Response code should equal "+strconv.Itoa(code), func() {
+		convey.So(rr.Code, convey.ShouldEqual, code)
+	})
 }
 
 func MarshallToJson(t *testing.T, serviceInstance interface{}) []byte {

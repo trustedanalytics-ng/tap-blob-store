@@ -17,6 +17,7 @@
 package api
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/gocraft/web"
@@ -32,7 +33,7 @@ const (
 	ExistedBlobID   = "1234"
 	NilBlobID       = "nil"
 
-	TestFileName = "testFile.txt"
+	TestFilePath = "../test/testFile.txt"
 )
 
 func prepareMocksAndRouter(t *testing.T) (router *web.Router, c ApiContext) {
@@ -49,27 +50,27 @@ func TestStoreBlob(t *testing.T) {
 		Convey("Blob ID not specified. Should return error message", func() {
 			bodyBuf, contentType := TestUtils.PrepareForm("", "")
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "The blob_id is not specified", 400)
+			TestUtils.AssertResponse(response, "The blobID is not specified", http.StatusBadRequest)
 		})
 		Convey("Blob file not specified. Should return error message", func() {
 			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobID, "")
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "Blob not specified.", 400)
+			TestUtils.AssertResponse(response, "Blob not specified.", http.StatusBadRequest)
 		})
 		Convey("Blob ID already exists. Should return error message", func() {
-			bodyBuf, contentType := TestUtils.PrepareForm(ExistedBlobID, TestFileName)
+			bodyBuf, contentType := TestUtils.PrepareForm(ExistedBlobID, TestFilePath)
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "The specified Blob ID is already in use", 409)
+			TestUtils.AssertResponse(response, "The specified Blob ID is already in use", http.StatusConflict)
 		})
 		Convey("Error! Should return unhandled exception", func() {
-			bodyBuf, contentType := TestUtils.PrepareForm(UnhandledBlobID, TestFileName)
+			bodyBuf, contentType := TestUtils.PrepareForm(UnhandledBlobID, TestFilePath)
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", http.StatusInternalServerError)
 		})
 		Convey("Should return proper response", func() {
-			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobID, TestFileName)
+			bodyBuf, contentType := TestUtils.PrepareForm(NewBlobID, TestFilePath)
 			response := TestUtils.SendForm(URLblobs, bodyBuf, contentType, router)
-			TestUtils.AssertResponse(response, "", 201)
+			TestUtils.AssertResponse(response, "", http.StatusCreated)
 		})
 	})
 }
@@ -96,19 +97,19 @@ func TestRetrieveBlob(t *testing.T) {
 	Convey("Test Retrieve Blob", t, func() {
 		Convey("Blob ID not existed. Should return error message", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+NewBlobID, nil, router)
-			TestUtils.AssertResponse(response, "The specified blob does not exist.", 404)
+			TestUtils.AssertResponse(response, "The specified blob does not exist.", http.StatusNotFound)
 		})
 		Convey("Error! Should return unhandled exception", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+UnhandledBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", http.StatusInternalServerError)
 		})
 		Convey("Blob ID exist, but Minio contains nil object. Should return error message", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+NilBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", http.StatusInternalServerError)
 		})
 		Convey("Should return proper response", func() {
 			response := TestUtils.SendRequest("GET", URLblobs+ExistedBlobID, nil, router)
-			TestUtils.AssertResponse(response, "", 200)
+			TestUtils.AssertResponse(response, "", http.StatusOK)
 		})
 	})
 }
@@ -120,15 +121,15 @@ func TestRemoveBlob(t *testing.T) {
 	Convey("Test Remove Blob", t, func() {
 		Convey("Blob ID not existed. Should return error message", func() {
 			response := TestUtils.SendRequest("DELETE", URLblobs+NewBlobID, nil, router)
-			TestUtils.AssertResponse(response, "The specified blob does not exist.", 404)
+			TestUtils.AssertResponse(response, "The specified blob does not exist.", http.StatusNotFound)
 		})
 		Convey("Error! Should return unhandled exception", func() {
 			response := TestUtils.SendRequest("DELETE", URLblobs+UnhandledBlobID, nil, router)
-			TestUtils.AssertResponse(response, "Unhandled Exception, error:", 500)
+			TestUtils.AssertResponse(response, "Unhandled Exception, error:", http.StatusInternalServerError)
 		})
 		Convey("Should return proper response", func() {
 			response := TestUtils.SendRequest("DELETE", URLblobs+ExistedBlobID, nil, router)
-			TestUtils.AssertResponse(response, "", 204)
+			TestUtils.AssertResponse(response, "", http.StatusNoContent)
 		})
 	})
 }
