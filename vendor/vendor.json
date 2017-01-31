@@ -70,22 +70,22 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "TMAWOipcdZIj8HqfHZqYrWh/two=",
+			"checksumSHA1": "MDHKisxjUtt5DGc4XW5nkgdYOno=",
 			"path": "github.com/trustedanalytics/tap-go-common/http",
-			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
-			"revisionTime": "2016-12-27T09:18:44Z"
+			"revision": "7140a3ee0edebbc5549916ac6e8ae5b6d6f10fa0",
+			"revisionTime": "2017-01-31T10:26:58Z"
 		},
 		{
 			"checksumSHA1": "O4sIfCHeupMT91S+wt73AAfH4bQ=",
 			"path": "github.com/trustedanalytics/tap-go-common/logger",
-			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
-			"revisionTime": "2016-12-27T09:18:44Z"
+			"revision": "7140a3ee0edebbc5549916ac6e8ae5b6d6f10fa0",
+			"revisionTime": "2017-01-31T10:26:58Z"
 		},
 		{
-			"checksumSHA1": "05MzhouJMf4FGs8YGNGJ9c/mIpg=",
+			"checksumSHA1": "eoMUCBYFcInJYZv1GWo1Ths6TY8=",
 			"path": "github.com/trustedanalytics/tap-go-common/util",
-			"revision": "57cb9e57f012c824b1fb95c578c63353f1470f8d",
-			"revisionTime": "2016-12-27T09:18:44Z"
+			"revision": "7140a3ee0edebbc5549916ac6e8ae5b6d6f10fa0",
+			"revisionTime": "2017-01-31T10:26:58Z"
 		}
 	],
 	"rootPath": "github.com/trustedanalytics/tap-blob-store"

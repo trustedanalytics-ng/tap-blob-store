@@ -21,7 +21,7 @@ import (
 
 	"github.com/gocraft/web"
 
-	"github.com/trustedanalytics/tap-go-common/util"
+	commonHTTP "github.com/trustedanalytics/tap-go-common/http"
 )
 
 func (c *ApiContext) BasicAuthorizeMiddleware(rw web.ResponseWriter, req *web.Request, next web.NextMiddlewareFunc) {
@@ -29,7 +29,7 @@ func (c *ApiContext) BasicAuthorizeMiddleware(rw web.ResponseWriter, req *web.Re
 	username, password, is_ok := req.BasicAuth()
 	if !is_ok || username != os.Getenv("BLOB_STORE_USER") || password != os.Getenv("BLOB_STORE_PASS") {
 		logger.Warning("EnforceAuthMiddleware - BasicAuth: Invalid Basic Auth credentials")
-		util.RespondUnauthorized(rw)
+		commonHTTP.RespondUnauthorized(rw)
 		return
 	}
 	logger.Info("EnforceAuthMiddleware - BasicAuth: User authenticated as ", username)
