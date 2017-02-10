@@ -27,8 +27,8 @@ import (
 	"github.com/gocraft/web"
 	"github.com/minio/minio-go"
 
-	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
-	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics-ng/tap-blob-store/minio-wrapper"
+	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 const (

@@ -23,7 +23,7 @@ import (
 
 	"github.com/minio/minio-go"
 
-	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 type ReducedMinioClient interface {

@@ -22,10 +22,10 @@ import (
 
 	"github.com/gocraft/web"
 
-	"github.com/trustedanalytics/tap-blob-store/api"
-	"github.com/trustedanalytics/tap-blob-store/minio-wrapper"
-	httpGoCommon "github.com/trustedanalytics/tap-go-common/http"
-	commonLogger "github.com/trustedanalytics/tap-go-common/logger"
+	"github.com/trustedanalytics-ng/tap-blob-store/api"
+	"github.com/trustedanalytics-ng/tap-blob-store/minio-wrapper"
+	httpGoCommon "github.com/trustedanalytics-ng/tap-go-common/http"
+	commonLogger "github.com/trustedanalytics-ng/tap-go-common/logger"
 )
 
 var (

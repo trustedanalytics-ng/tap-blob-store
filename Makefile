@@ -54,8 +54,8 @@ deps_fetch_specific: bin/govendor
 	$(GOBIN)/govendor fetch -v $(DEP_URL)
 
 deps_update_tap: verify_gopath
-	$(GOBIN)/govendor update github.com/trustedanalytics/...
-	$(GOBIN)/govendor remove github.com/trustedanalytics/$(APP_NAME)/...
+	$(GOBIN)/govendor update github.com/trustedanalytics-ng/...
+	$(GOBIN)/govendor remove github.com/trustedanalytics-ng/$(APP_NAME)/...
 	@echo "Done"
 
 local_bin/minio: bin/minio
@@ -73,7 +73,7 @@ run: local_bin/blob-store local_bin/minio
 build_anywhere: prepare_dirs
 	$(eval GOPATH=$(shell cd ./temp; pwd))
 	$(eval GOBIN=$(GOPATH)/bin)
-	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics/tap-blob-store/... | grep -v /vendor/))
+	$(eval APP_DIR_LIST=$(shell GOPATH=$(GOPATH) go list ./temp/src/github.com/trustedanalytics-ng/tap-blob-store/... | grep -v /vendor/))
 	GOPATH=$(GOPATH) CGO_ENABLED=0 go build -tags netgo $(APP_DIR_LIST)
 	@if [ ! -f "$(GOBIN)/minio" ]; then\
 		mkdir -p ./temp/bin;\
@@ -90,9 +90,9 @@ build_anywhere: prepare_dirs
 	rm -Rf ./temp
 
 prepare_dirs:
-	mkdir -p ./temp/src/github.com/trustedanalytics/tap-blob-store
+	mkdir -p ./temp/src/github.com/trustedanalytics-ng/tap-blob-store
 	$(eval REPOFILES=$(shell pwd)/*)
-	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics/tap-blob-store
+	ln -sf $(REPOFILES) temp/src/github.com/trustedanalytics-ng/tap-blob-store
 
 docker_build: build_anywhere
 	docker build -t tap-blob-store .
